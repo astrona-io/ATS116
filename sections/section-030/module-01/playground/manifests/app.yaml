@@ -1,0 +1,111 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: proxy-demo
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: inventory-proxy
+  namespace: proxy-demo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy-config
+  namespace: proxy-demo
+data:
+  proxy.hcl: |
+    vault {
+      address = "http://openbao.openbao.svc:8200"
+    }
+
+    auto_auth {
+      method "kubernetes" {
+        mount_path = "auth/kubernetes"
+        config = {
+          role = "inventory-proxy"
+        }
+      }
+    }
+
+    api_proxy {
+      use_auto_auth_token = true
+    }
+
+    # Only containers in this pod can reach the proxy.
+    listener "tcp" {
+      address     = "127.0.0.1:8100"
+      tls_disable = true
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: proxy-demo
+data:
+  default.conf: |
+    server {
+      listen 80;
+      location = /config {
+        proxy_pass http://127.0.0.1:8100/v1/secret/data/inventory/config;
+      }
+      location = /healthz {
+        return 200 "ok";
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory
+  namespace: proxy-demo
+  labels:
+    app: inventory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      serviceAccountName: inventory-proxy
+      containers:
+        - name: proxy
+          image: quay.io/openbao/openbao:2.7.1
+          command: ["bao", "proxy", "-config=/etc/openbao-proxy/proxy.hcl"]
+          volumeMounts:
+            - name: proxy-config
+              mountPath: /etc/openbao-proxy
+        - name: app
+          image: nginx:1.27-alpine
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+        - name: proxy-config
+          configMap:
+            name: proxy-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory
+  namespace: proxy-demo
+spec:
+  selector:
+    app: inventory
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

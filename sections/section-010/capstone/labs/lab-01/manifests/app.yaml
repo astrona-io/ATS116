@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: apicapstone
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: report-script
+  namespace: apicapstone
+data:
+  report.sh: |
+    #!/bin/sh
+    # Lists every secret under secret/inventory and prints its fields.
+    set -eu
+    API="http://openbao.openbao.svc:8200/v1"
+    ROLE_ID="$(cat /etc/approle/role-id)"
+    SECRET_ID="$(cat /etc/approle/secret-id)"
+
+    LOGIN="$(curl -s -X POST --data "{\"role_id\":\"$ROLE_ID\",\"secret_id\":\"$SECRET_ID\"}" "$API/auth/approle/login")"
+    TOKEN="$(printf '%s' "$LOGIN" | jq -r '.data.client_token')"
+
+    KEYS="$(curl -s -H "X-Vault-Token: $TOKEN" "$API/secret/metadata/inventory" | jq -r '.data.keys[]')"
+    for key in $KEYS; do
+      FIELDS="$(curl -s -H "X-Vault-Token: $TOKEN" "$API/secret/inventory/$key" | jq -c '.data.data')"
+      echo "$key: $FIELDS"
+    done
+    echo "REPORT OK"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: inventory-report
+  namespace: apicapstone
+spec:
+  # Suspended: run it by hand with kubectl create job --from=cronjob/inventory-report.
+  schedule: "0 0 1 1 *"
+  suspend: true
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: report
+              image: nicolaka/netshoot:v0.13
+              command: ["sh", "/scripts/report.sh"]
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                - name: approle
+                  mountPath: /etc/approle
+                  readOnly: true
+          volumes:
+            - name: script
+              configMap:
+                name: report-script
+            - name: approle
+              secret:
+                secretName: report-approle

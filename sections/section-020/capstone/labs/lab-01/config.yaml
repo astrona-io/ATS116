@@ -1,0 +1,55 @@
+# Log The Agent In With AppRole And Keep The File Fresh
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-116-capstone-020"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+
+bootstrap:
+  init:
+    - name: "install-openbao"
+      description: "Installs the bao CLI and OpenBao 2.7.1, initialized and unsealed"
+      type: "file"
+      source: "bootstrap/01-install-openbao.sh"
+    - name: "ats-116-capstone-020-setup"
+      description: "Creates the starting state in `agentcapstone` that the task works from"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+
+testing:
+  init:
+    - name: "wait-for-openbao"
+      description: "Waits until OpenBao answers as an unsealed active node"
+      type: "file"
+      source: "testing/wait-for-openbao.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+
+validation:
+  scripts:
+    - name: "validate-app-serves-config"
+      description: "the inventory app serves the rendered configuration with the current secret"
+      type: "file"
+      source: "validation/validate-app-serves-config.sh"
+    - name: "validate-rerender"
+      description: "a new KV version reaches the app within 90 seconds, with no restart"
+      type: "file"
+      source: "validation/validate-rerender.sh"
+    - name: "validate-no-static-token"
+      description: "no OpenBao token is written into the inventory pod spec or its ConfigMaps"
+      type: "file"
+      source: "validation/validate-no-static-token.sh"
+    - name: "validate-policy-narrow"
+      description: "batch-reader reads only the inventory configuration"
+      type: "file"
+      source: "validation/validate-policy-narrow.sh"
+
+teardown:
+  keepCluster: false

@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agent-demo
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: inventory-agent
+  namespace: agent-demo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-config
+  namespace: agent-demo
+data:
+  agent.hcl: |
+    vault {
+      address = "http://openbao.openbao.svc:8200"
+    }
+
+    auto_auth {
+      method "kubernetes" {
+        mount_path = "auth/kubernetes"
+        config = {
+          role = "inventory-agent"
+        }
+      }
+
+      sink "file" {
+        config = {
+          path = "/home/openbao/agent/token"
+        }
+      }
+    }
+
+    template_config {
+      static_secret_render_interval = "15s"
+    }
+
+    template {
+      destination = "/etc/inventory/config.env"
+      contents    = <<EOT
+    {{ with secret "secret/data/inventory/config" }}DB_HOST={{ .Data.data.db_host }}
+    DB_USER={{ .Data.data.db_user }}
+    API_KEY={{ .Data.data.api_key }}
+    {{ end }}
+    EOT
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: agent-demo
+data:
+  default.conf: |
+    server {
+      listen 80;
+      location = /config {
+        default_type text/plain;
+        alias /etc/inventory/config.env;
+      }
+      location = /healthz {
+        return 200 "ok";
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory
+  namespace: agent-demo
+  labels:
+    app: inventory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      serviceAccountName: inventory-agent
+      containers:
+        - name: agent
+          image: quay.io/openbao/openbao:2.7.1
+          command: ["bao", "agent", "-config=/etc/openbao-agent/agent.hcl"]
+          volumeMounts:
+            - name: agent-config
+              mountPath: /etc/openbao-agent
+            - name: agent-home
+              mountPath: /home/openbao/agent
+            - name: rendered
+              mountPath: /etc/inventory
+        - name: app
+          image: nginx:1.27-alpine
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d
+            - name: rendered
+              mountPath: /etc/inventory
+              readOnly: true
+      volumes:
+        - name: agent-config
+          configMap:
+            name: agent-config
+        - name: agent-home
+          emptyDir: {}
+        - name: rendered
+          emptyDir: {}
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory
+  namespace: agent-demo
+spec:
+  selector:
+    app: inventory
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

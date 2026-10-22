@@ -1,0 +1,349 @@
+# Course manifest for ATS116 - OpenBao Agent, Proxy & Application Integration.
+#
+# One entry per section under `modules:`. Each section lists, in order: its
+# README, then for each module the landing page (course.md), its parts
+# (course-0N-*.md), and right after the part a lab tests, the lab's
+# question.md reading and the `type: lab` entry. The module's summary page
+# comes last. The section capstone closes the section. Playgrounds are not
+# listed: the landing page's playground marker shows them. solution.md is
+# never listed.
+#
+# Every `path:` is relative to this file.
+
+training:
+  id: ATS116
+  title: "OpenBao: Agent, Proxy & Application Integration"
+  maturity: draft
+  description: >
+    Training material covering the OpenBao Agent, Proxy & Application
+    Integration domain of the OpenBao training path: the HTTP API with
+    tokens, listing and response wrapping, OpenBao Agent with auto-auth,
+    sinks, templates and process supervisor mode, OpenBao Proxy with the
+    auto-auth token and caching, and the Kubernetes agent injector with
+    annotations and templates. Each module pairs a layered reader with an
+    ungraded hands-on playground and a graded practice lab. Each section
+    closes with an integration capstone.
+    Written for OpenBao v2.7.1.
+
+  certification:
+    name: OpenBao
+    code: OPENBAO
+    provider: Astrona
+    domain: OpenBao Agent, Proxy & Application Integration
+    weight: 15
+
+modules:
+
+  - id: module-intro
+    title: "Introduction"
+    description: >
+      Start here. What this course trains you to do, how it is laid out, how
+      to get your machine ready with the astrona command-line tool, how the
+      content is written and checked, who maintains it, and how to report a
+      mistake.
+
+    content:
+      - type: reading
+        title: Introduction
+        path: sections/intro/README.md
+      - type: reading
+        title: "Welcome To The Course"
+        path: sections/intro/course-01-welcome.md
+      - type: reading
+        title: "Get Your Machine Ready"
+        path: sections/intro/course-02-get-your-machine-ready.md
+      - type: reading
+        title: "How This Course Is Made"
+        path: sections/intro/course-03-how-this-course-is-made.md
+
+  - id: module-010
+    title: "The OpenBao HTTP API"
+    description: >
+      The API every OpenBao client uses: request paths, the token header,
+      response and error formats, logging in, reading, writing and listing
+      KV version 2 secrets, and handing a secret over with response wrapping.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-010/README.md
+
+      - type: reading
+        title: "Talk To OpenBao Over HTTP"
+        path: sections/section-010/module-01/course.md
+      - type: reading
+        title: "Requests, Tokens And Responses"
+        path: sections/section-010/module-01/course-01-requests-tokens-and-responses.md
+      - type: reading
+        title: "Logging In, Reading, Writing And Listing"
+        path: sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
+      - type: reading
+        title: "Response Wrapping And Request Headers"
+        path: sections/section-010/module-01/course-03-response-wrapping-and-headers.md
+      - type: reading
+        title: Question
+        path: sections/section-010/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Hand Over A Secret With A Wrapped Response Lab"
+        path: sections/section-010/module-01/labs/lab-01
+        difficulty: beginner
+        estimated_duration: 20m
+        topic: http-api
+        task_kind: build
+        tags: [http-api, x-vault-token, userpass, kv-v2, response-wrapping]
+        learning_goals:
+          - Log in over HTTP with userpass and use the returned token in the X-Vault-Token header
+          - Write a KV version 2 secret with a non-root token
+          - Hand the secret over as a single-use wrapping token with a fixed TTL
+        resources:
+          - name: "HTTP API overview"
+            url: https://openbao.org/docs/api/
+          - name: "Response wrapping"
+            url: https://openbao.org/docs/concepts/response-wrapping/
+          - name: "KV version 2 secrets engine"
+            url: https://openbao.org/docs/secrets/kv/kv-v2/
+      - type: reading
+        title: Summary
+        path: sections/section-010/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-010/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Repair A Script That Calls The OpenBao API Capstone"
+        path: sections/section-010/capstone/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 30m
+        topic: http-api
+        task_kind: troubleshooting
+        tags: [http-api, x-vault-token, list-verb, kv-v2, approle]
+        learning_goals:
+          - Find why a script's API calls fail from the HTTP status codes and error bodies
+          - Fix the token header, the KV version 2 paths and the list request
+          - Prove the fix with a Job that completes and reports every key under the path
+        resources:
+          - name: "HTTP API overview"
+            url: https://openbao.org/docs/api/
+          - name: "AppRole auth method"
+            url: https://openbao.org/docs/auth/approle/
+          - name: "KV version 2 secrets engine"
+            url: https://openbao.org/docs/secrets/kv/kv-v2/
+
+  - id: module-020
+    title: "OpenBao Agent"
+    description: >
+      OpenBao Agent as a container next to the application: auto-auth with
+      the Kubernetes method and a file sink, templates that render secrets
+      into files and render them again when the secret changes, and process
+      supervisor mode for secrets as environment variables.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-020/README.md
+
+      - type: reading
+        title: "Render Secrets Into Files With OpenBao Agent"
+        path: sections/section-020/module-01/course.md
+      - type: reading
+        title: "Auto-Auth And Sinks"
+        path: sections/section-020/module-01/course-01-auto-auth-and-sinks.md
+      - type: reading
+        title: "Rendering Secrets With Templates"
+        path: sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Render The Inventory Configuration With OpenBao Agent Lab"
+        path: sections/section-020/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: templates
+        task_kind: troubleshooting
+        tags: [auto-auth, kubernetes-auth, agent-template, template-config, kv-v2, zero-code-change]
+        learning_goals:
+          - Find why OpenBao Agent cannot log in or render from its log
+          - Fix the role and the template so the application serves the rendered configuration
+          - Prove that a new secret version reaches the file without restarting the pod
+        resources:
+          - name: "OpenBao Agent"
+            url: https://openbao.org/docs/agent-and-proxy/agent/
+          - name: "OpenBao Agent templates"
+            url: https://openbao.org/docs/agent-and-proxy/agent/template/
+          - name: "Auto-auth kubernetes method"
+            url: https://openbao.org/docs/agent-and-proxy/autoauth/methods/kubernetes/
+      - type: reading
+        title: "Secrets As Environment Variables With Process Supervisor Mode"
+        path: sections/section-020/module-01/course-03-process-supervisor-mode.md
+      - type: reading
+        title: Summary
+        path: sections/section-020/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-020/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Log The Agent In With AppRole And Keep The File Fresh Capstone"
+        path: sections/section-020/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 35m
+        topic: agent
+        task_kind: troubleshooting
+        tags: [auto-auth, approle, file-sink, agent-template, template-config, policy]
+        learning_goals:
+          - Find why an AppRole auto-auth agent never renders its file
+          - Fix the credential files, the policy and the render interval without giving the agent a static token
+          - Prove the application shows a new secret version within a minute
+        resources:
+          - name: "Auto-auth approle method"
+            url: https://openbao.org/docs/agent-and-proxy/autoauth/methods/approle/
+          - name: "OpenBao Agent templates"
+            url: https://openbao.org/docs/agent-and-proxy/agent/template/
+          - name: "Policies"
+            url: https://openbao.org/docs/concepts/policies/
+
+  - id: module-030
+    title: "OpenBao Proxy And Caching"
+    description: >
+      OpenBao Proxy as a token-free path to OpenBao: the API proxy with the
+      auto-auth token, running the proxy as a sidecar that only its own pod
+      can reach, and caching tokens and leases.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-030/README.md
+
+      - type: reading
+        title: "Give Applications A Token-Free Path With OpenBao Proxy"
+        path: sections/section-030/module-01/course.md
+      - type: reading
+        title: "The API Proxy And The Auto-Auth Token"
+        path: sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
+      - type: reading
+        title: "Running The Proxy Next To The Application"
+        path: sections/section-030/module-01/course-02-proxy-as-a-sidecar.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Serve Secrets To An App Through An OpenBao Proxy Sidecar Lab"
+        path: sections/section-030/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: proxy
+        task_kind: build
+        tags: [bao-proxy, api-proxy, auto-auth, kubernetes-auth, sidecar, service-account]
+        learning_goals:
+          - Run OpenBao Proxy as a sidecar that logs in with the pod's service account
+          - Let the application read a secret through the proxy without a token
+          - Keep the proxy listener reachable only from inside its own pod
+        resources:
+          - name: "OpenBao Proxy"
+            url: https://openbao.org/docs/agent-and-proxy/proxy/
+          - name: "OpenBao Proxy API proxy"
+            url: https://openbao.org/docs/agent-and-proxy/proxy/apiproxy/
+      - type: reading
+        title: "Caching Tokens And Leases"
+        path: sections/section-030/module-01/course-03-caching-tokens-and-leases.md
+      - type: reading
+        title: Summary
+        path: sections/section-030/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-030/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Move An App From A Static Token To OpenBao Proxy Capstone"
+        path: sections/section-030/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 35m
+        topic: proxy
+        task_kind: migration
+        tags: [bao-proxy, api-proxy, sidecar, kubernetes-auth, policy, zero-code-change]
+        learning_goals:
+          - Replace a long-lived token in an application's environment with an OpenBao Proxy sidecar
+          - Grant the proxy's role only the paths the application reads
+          - Revoke the old token and prove the application still works without it
+        resources:
+          - name: "OpenBao Proxy"
+            url: https://openbao.org/docs/agent-and-proxy/proxy/
+          - name: "Kubernetes auth method"
+            url: https://openbao.org/docs/auth/kubernetes/
+          - name: "Tokens"
+            url: https://openbao.org/docs/concepts/tokens/
+
+  - id: module-040
+    title: "The Kubernetes Agent Injector"
+    description: >
+      The agent injector that adds OpenBao Agent to pods from annotations:
+      what really runs and why its names still say vault, the annotations for
+      secrets, templates and render intervals, and how to find out why a pod
+      was not injected or its init container never finishes.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-040/README.md
+
+      - type: reading
+        title: "Deliver Secrets To Pods With The Agent Injector"
+        path: sections/section-040/module-01/course.md
+      - type: reading
+        title: "How The Agent Injector Works"
+        path: sections/section-040/module-01/course-01-how-the-injector-works.md
+      - type: reading
+        title: "Annotations And Templates"
+        path: sections/section-040/module-01/course-02-annotations-and-templates.md
+      - type: reading
+        title: Question
+        path: sections/section-040/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Deliver Secrets To The Inventory Pods Without Code Changes Lab"
+        path: sections/section-040/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: injector
+        task_kind: build
+        tags: [agent-injector, annotations, agent-template, kubernetes-auth, service-account, zero-code-change]
+        learning_goals:
+          - Bind a Kubernetes auth role to the application's service account with a read-only policy
+          - Annotate the pod template so the injector renders the configuration into /vault/secrets
+          - Prove the application serves the secret and picks up a new version with no image or command change
+        resources:
+          - name: "Agent sidecar injector"
+            url: https://openbao.org/docs/platform/k8s/injector/
+          - name: "Injector annotations"
+            url: https://openbao.org/docs/platform/k8s/injector/annotations/
+          - name: "Kubernetes auth method"
+            url: https://openbao.org/docs/auth/kubernetes/
+      - type: reading
+        title: "Troubleshooting Injection"
+        path: sections/section-040/module-01/course-03-troubleshooting-injection.md
+      - type: reading
+        title: Summary
+        path: sections/section-040/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-040/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Repair Secret Injection For The Inventory App Capstone"
+        path: sections/section-040/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 35m
+        topic: injector
+        task_kind: troubleshooting
+        tags: [agent-injector, annotations, agent-template, service-account, kubernetes-auth, pre-populate]
+        learning_goals:
+          - Find why pods are not injected, or why their init container never finishes
+          - Fix the annotations, the role binding and the template without changing the application
+          - Prove the rendered secret is served and follows a new secret version
+        resources:
+          - name: "Agent sidecar injector"
+            url: https://openbao.org/docs/platform/k8s/injector/
+          - name: "Injector examples"
+            url: https://openbao.org/docs/platform/k8s/injector/examples/
+          - name: "OpenBao Agent templates"
+            url: https://openbao.org/docs/agent-and-proxy/agent/template/
