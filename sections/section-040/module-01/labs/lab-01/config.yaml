@@ -9,7 +9,6 @@ metadata:
     question: "question.md"
     examQuestion: "question.md"
     prerequisites: "prerequisites.md"
-
 bootstrap:
   init:
     - name: "install-openbao"
@@ -20,7 +19,6 @@ bootstrap:
       description: "Creates the starting state in `inventory` that the task works from"
       type: "file"
       source: "bootstrap/02-seed-state.sh"
-
 testing:
   init:
     - name: "wait-for-openbao"
@@ -31,7 +29,6 @@ testing:
       description: "The remediation a correct learner performs; used by `astrona test`"
       type: "file"
       source: "solution/apply.sh"
-
 validation:
   scripts:
     - name: "validate-pod-injected"
@@ -54,6 +51,12 @@ validation:
       description: "the Kubernetes auth role inventory is bound to inventory in inventory with only inventory-reader"
       type: "file"
       source: "validation/validate-role-scoped.sh"
-
 teardown:
   keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - docker.io/hashicorp/vault-k8s:1.7.6
+      - nginx:1.27-alpine
+      - nicolaka/netshoot:v0.13
+      - quay.io/openbao/openbao:2.7.1

@@ -9,7 +9,6 @@ metadata:
     question: "question.md"
     examQuestion: "question.md"
     prerequisites: "prerequisites.md"
-
 bootstrap:
   init:
     - name: "install-openbao"
@@ -20,7 +19,6 @@ bootstrap:
       description: "Creates the starting state in `proxycapstone` that the task works from"
       type: "file"
       source: "bootstrap/02-seed-state.sh"
-
 testing:
   init:
     - name: "wait-for-openbao"
@@ -31,7 +29,6 @@ testing:
       description: "The remediation a correct learner performs; used by `astrona test`"
       type: "file"
       source: "solution/apply.sh"
-
 validation:
   scripts:
     - name: "validate-app-reads-through-proxy"
@@ -58,6 +55,12 @@ validation:
       description: "the app container still runs nginx:1.27-alpine with its default command"
       type: "file"
       source: "validation/validate-app-unchanged.sh"
-
 teardown:
   keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - docker.io/hashicorp/vault-k8s:1.7.6
+      - nginx:1.27-alpine
+      - nicolaka/netshoot:v0.13
+      - quay.io/openbao/openbao:2.7.1
