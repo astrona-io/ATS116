@@ -29,8 +29,6 @@ training:
     name: OpenBao
     code: OPENBAO
     provider: Astrona
-    domain: OpenBao Agent, Proxy & Application Integration
-    weight: 15
 
 modules:
 
