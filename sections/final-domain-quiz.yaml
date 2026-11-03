@@ -1,0 +1,308 @@
+# Final domain quiz. Listed in astrona.yaml as the last `type: quiz` entry.
+schema_version: 1
+kind: question_bank
+id: ats116-final
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: domain
+  id: ats116
+  title: 'OpenBao: Agent, Proxy & Application Integration'
+placement:
+  position: after
+  reading: sections/section-040/capstone/labs/lab-01/question.md
+questions:
+- id: ats116-final-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read an error from the status code
+  source_readings:
+  - sections/section-010/module-01/course-01-requests-tokens-and-responses.md
+  prompt: A `curl` request to `/v1/secret/data/inventory/config` is sent without a
+    token. What does OpenBao answer?
+  options:
+  - id: a
+    text: Status `403` with an `errors` list that says `permission denied`.
+    explanation: Correct. A request without a token is treated like a request with
+      a token that has no rights.
+  - id: b
+    text: Status `404` because the path is hidden from anonymous callers.
+    explanation: Not correct. `404` means nothing exists at the path.
+  - id: c
+    text: Status `200` with an empty `data` field.
+    explanation: Not correct. The request is refused, so there is no successful response.
+  - id: d
+    text: Status `503` because OpenBao is sealed.
+    explanation: Not correct. `503` means sealed or not ready. The server here is
+      unsealed.
+  correct_option: a
+  explanation: Correct. A request without a token is treated like a request with a
+    token that has no rights.
+- id: ats116-final-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Find the token in a login response
+  source_readings:
+  - sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
+  prompt: You log in with userpass over HTTP. Where does the new token appear in the
+    response?
+  options:
+  - id: a
+    text: In `data.token`.
+    explanation: Not correct. For a login `data` is empty.
+  - id: b
+    text: In `auth.client_token`.
+    explanation: Correct. A login fills `auth`, not `data`.
+  - id: c
+    text: In `wrap_info.token`.
+    explanation: Not correct. `wrap_info` is filled only for a wrapped response.
+  - id: d
+    text: In the `request_id` field.
+    explanation: Not correct. `request_id` identifies the request and is not a token.
+  correct_option: b
+  explanation: Correct. A login fills `auth`, not `data`.
+- id: ats116-final-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: React to a failed first unwrap
+  source_readings:
+  - sections/section-010/module-01/course-03-response-wrapping-and-headers.md
+  prompt: The receiver unwraps a wrapping token for the first time and OpenBao says
+    the token is no longer valid. What must the sender do?
+  options:
+  - id: a
+    text: Ask for a new wrapping token of the same secret and carry on.
+    explanation: Not correct. The secret was already read by someone else.
+  - id: b
+    text: Retry the unwrap with a longer TTL.
+    explanation: Not correct. A used wrapping token cannot be opened again.
+  - id: c
+    text: Treat the secret as leaked and replace it.
+    explanation: Correct. Someone else unwrapped it first.
+  - id: d
+    text: Do nothing, because wrapping tokens expire and renew themselves.
+    explanation: Not correct. A wrapping token works exactly once.
+  correct_option: c
+  explanation: Correct. Someone else unwrapped it first.
+- id: ats116-final-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Follow a Kubernetes auth login
+  source_readings:
+  - sections/section-020/module-01/course-01-auto-auth-and-sinks.md
+  prompt: The agent sends its pod's service account token to OpenBao. How does OpenBao
+    check it?
+  options:
+  - id: a
+    text: It compares the token with a password stored in the agent configuration.
+    explanation: Not correct. No password is involved.
+  - id: b
+    text: It accepts any token that starts with the pod name.
+    explanation: Not correct. OpenBao validates the token with the Kubernetes API.
+  - id: c
+    text: It reads the token from the sink file.
+    explanation: Not correct. The sink is where the agent writes the OpenBao token,
+      not what OpenBao reads.
+  - id: d
+    text: It asks the Kubernetes API with a TokenReview, then checks that the role
+      allows that service account and namespace.
+    explanation: Correct. The role turns the identity into an OpenBao token.
+  correct_option: d
+  explanation: Correct. The role turns the identity into an OpenBao token.
+- id: ats116-final-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know when the agent renders again
+  source_readings:
+  - sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
+  prompt: The agent renders a KV version 2 secret. How long can a new version take
+    to reach the file if nothing is changed in `template_config`?
+  options:
+  - id: a
+    text: Up to five minutes, because the default `static_secret_render_interval`
+      is five minutes.
+    explanation: Correct. KV version 2 secrets have no lease, so the agent reads them
+      again on a timer.
+  - id: b
+    text: It reaches the file at once, because the agent watches OpenBao for changes.
+    explanation: Not correct. The agent does not watch OpenBao.
+  - id: c
+    text: Up to one hour, which is the lifetime of the token.
+    explanation: Not correct. The token lifetime does not set the render timer.
+  - id: d
+    text: Never, until the pod restarts.
+    explanation: Not correct. The agent reads the secret again on its own.
+  correct_option: a
+  explanation: Correct. KV version 2 secrets have no lease, so the agent reads them
+    again on a timer.
+- id: ats116-final-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: See what happens when a secret changes
+  source_readings:
+  - sections/section-020/module-01/course-03-process-supervisor-mode.md
+  prompt: In process supervisor mode with `restart_on_secret_changes = "always"`,
+    a secret changes. What does the agent do?
+  options:
+  - id: a
+    text: It changes the environment variables of the running child.
+    explanation: Not correct. Environment variables are read at start and cannot be
+      changed in a running process.
+  - id: b
+    text: It sends the child process `SIGTERM`, waits for it to stop and starts it
+      again with the new variables.
+    explanation: Correct. The pod and the agent keep running. Only the child is replaced.
+  - id: c
+    text: It restarts the whole pod.
+    explanation: Not correct. Only the child process is replaced.
+  - id: d
+    text: It does nothing until the next pod restart.
+    explanation: Not correct. That is the behaviour of `restart_on_secret_changes
+      = "never"`.
+  correct_option: b
+  explanation: Correct. The pod and the agent keep running. Only the child is replaced.
+- id: ats116-final-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict a request with a bad token
+  source_readings:
+  - sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
+  prompt: 'A program sends a request through the proxy with `X-Vault-Token: not-a-real-token`.
+    The proxy uses `use_auto_auth_token = true`. What happens?'
+  options:
+  - id: a
+    text: The proxy replaces the token with its own and OpenBao answers `200`.
+    explanation: Not correct. Replacing a token happens only with `"force"`.
+  - id: b
+    text: The proxy refuses the request itself with `405`.
+    explanation: Not correct. The proxy does not judge the token.
+  - id: c
+    text: The proxy forwards the token as it is and OpenBao answers `403`.
+    explanation: Correct. The caller's token is used, not the proxy's.
+  - id: d
+    text: The proxy logs in again and retries the request.
+    explanation: Not correct. A bad caller token does not start a new login.
+  correct_option: c
+  explanation: Correct. The caller's token is used, not the proxy's.
+- id: ats116-final-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Name the risk of a shared proxy
+  source_readings:
+  - sections/section-030/module-01/course-02-proxy-as-a-sidecar.md
+  prompt: What is the main risk of running one shared proxy Deployment with its own
+    Service for many applications?
+  options:
+  - id: a
+    text: The proxy cannot log in with a service account.
+    explanation: Not correct. It can log in with the service account of its own pod.
+  - id: b
+    text: The proxy cannot renew its token.
+    explanation: Not correct. Renewal does not depend on the deployment style.
+  - id: c
+    text: OpenBao refuses requests from a Service.
+    explanation: Not correct. OpenBao has no such rule.
+  - id: d
+    text: Every pod that can reach the Service acts with the proxy's identity and
+      policies.
+    explanation: Correct. The proxy adds its token to every request without one.
+  correct_option: d
+  explanation: Correct. The proxy adds its token to every request without one.
+- id: ats116-final-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know what a stopped proxy does
+  source_readings:
+  - sections/section-030/module-01/course-03-caching-tokens-and-leases.md
+  prompt: The proxy stops. What happens to the tokens and leases it cached?
+  options:
+  - id: a
+    text: The proxy forgets them and stops renewing them. They are not revoked and
+      expire on their own schedule.
+    explanation: Correct. A `persist` block can restore the cache after a restart.
+  - id: b
+    text: OpenBao revokes all of them at once.
+    explanation: Not correct. Stopping the proxy does not revoke anything.
+  - id: c
+    text: They stay valid forever.
+    explanation: Not correct. Without renewal they expire at their TTL.
+  - id: d
+    text: The proxy writes them to a sink first.
+    explanation: Not correct. A sink is for the auto-auth token, not for the cache.
+  correct_option: a
+  explanation: Correct. A `persist` block can restore the cache after a restart.
+- id: ats116-final-q10
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Know where secrets are written
+  source_readings:
+  - sections/section-040/module-01/course-01-how-the-injector-works.md
+  prompt: In which directory do injected secrets appear inside the pod?
+  options:
+  - id: a
+    text: "`/openbao/secrets`"
+    explanation: Not correct. With this injector the directory is `/vault/secrets`.
+  - id: b
+    text: "`/vault/secrets`"
+    explanation: Correct. It is a shared in-memory volume mounted in every container.
+  - id: c
+    text: "`/etc/secrets`"
+    explanation: Not correct. The injector does not use this directory.
+  - id: d
+    text: "`/var/run/secrets/kubernetes.io/serviceaccount`"
+    explanation: Not correct. That directory holds the service account token.
+  correct_option: b
+  explanation: Correct. It is a shared in-memory volume mounted in every container.
+- id: ats116-final-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Match secret and template names
+  source_readings:
+  - sections/section-040/module-01/course-02-annotations-and-templates.md
+  prompt: The annotations `agent-inject-secret-config.env` and `agent-inject-template-db.env`
+    are both set. What is the result?
+  options:
+  - id: a
+    text: The file `config.env` is rendered with the template `db.env`.
+    explanation: Not correct. The names must match.
+  - id: b
+    text: The injector refuses the pod.
+    explanation: Not correct. It injects the pod and uses the default format.
+  - id: c
+    text: The template does not apply to the file `config.env`, so that file gets
+      the default format.
+    explanation: Correct. A template applies to the secret with the same name.
+  - id: d
+    text: The file is named `db.env`.
+    explanation: Not correct. The file name comes from the secret annotation.
+  correct_option: c
+  explanation: Correct. A template applies to the secret with the same name.
+- id: ats116-final-q12
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Debug a stuck init container
+  source_readings:
+  - sections/section-040/module-01/course-03-troubleshooting-injection.md
+  prompt: An injected pod stays in `Init:0/1`. Which log do you read first?
+  options:
+  - id: a
+    text: The log of the `app` container.
+    explanation: Not correct. The application has not started yet.
+  - id: b
+    text: The log of the Kubernetes scheduler.
+    explanation: Not correct. `Init:0/1` almost always means the agent cannot log
+      in or read the secret.
+  - id: c
+    text: The log of the `tester` pod.
+    explanation: Not correct. That pod is a client and is not part of the injected
+      pod.
+  - id: d
+    text: The log of the `vault-agent-init` container.
+    explanation: Correct. It shows whether the login or the render failed, for example
+      with `permission denied`.
+  correct_option: d
+  explanation: Correct. It shows whether the login or the render failed, for example
+    with `permission denied`.

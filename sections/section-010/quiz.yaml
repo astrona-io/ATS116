@@ -1,0 +1,262 @@
+# Knowledge check for section 010. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats116-010
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-010
+  title: The OpenBao HTTP API
+placement:
+  position: after
+  reading: sections/section-010/capstone/labs/lab-01/question.md
+questions:
+- id: ats116-010-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Check a wrapping token without using it
+  source_readings:
+  - sections/section-010/module-01/course-03-response-wrapping-and-headers.md
+  prompt: A receiver wants to check where a wrapping token came from before using
+    it. Which request does that without using the token up?
+  options:
+  - id: a
+    text: A POST to `sys/wrapping/lookup` with the wrapping token in the body.
+    explanation: Correct. The lookup shows the creation path and TTL and does not
+      use the token.
+  - id: b
+    text: A POST to `sys/wrapping/unwrap` with the wrapping token.
+    explanation: Not correct. Unwrapping uses the token and it works only once.
+  - id: c
+    text: A GET on `secret/metadata/inventory`.
+    explanation: Not correct. That reads the metadata of a secret and says nothing
+      about a wrapping token.
+  - id: d
+    text: A GET on `sys/health`.
+    explanation: Not correct. It reports the server state, not a wrapping token.
+  correct_option: a
+  explanation: Correct. The lookup shows the creation path and TTL and does not use
+    the token.
+- id: ats116-010-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read an error from the status code
+  source_readings:
+  - sections/section-010/module-01/course-01-requests-tokens-and-responses.md
+  prompt: A `curl` request to `/v1/secret/data/inventory/config` is sent without a
+    token. What does OpenBao answer?
+  options:
+  - id: a
+    text: Status `404` because the path is hidden from anonymous callers.
+    explanation: Not correct. `404` means nothing exists at the path.
+  - id: b
+    text: Status `200` with an empty `data` field.
+    explanation: Not correct. The request is refused, so there is no successful response.
+  - id: c
+    text: Status `403` with an `errors` list that says `permission denied`.
+    explanation: Correct. A request without a token is treated like a request with
+      a token that has no rights.
+  - id: d
+    text: Status `503` because OpenBao is sealed.
+    explanation: Not correct. `503` means sealed or not ready. The server here is
+      unsealed.
+  correct_option: c
+  explanation: Correct. A request without a token is treated like a request with a
+    token that has no rights.
+- id: ats116-010-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Send a token in a request
+  source_readings:
+  - sections/section-010/module-01/course-01-requests-tokens-and-responses.md
+  prompt: Which request header carries the token to the OpenBao HTTP API?
+  options:
+  - id: a
+    text: "`X-Vault-Request`"
+    explanation: Not correct. That header marks a request as coming from an OpenBao
+      client.
+  - id: b
+    text: "`X-Vault-Token`"
+    explanation: 'Correct. The name still says Vault because OpenBao keeps the old
+      names. `Authorization: Bearer <token>` works as well.'
+  - id: c
+    text: "`X-Vault-Namespace`"
+    explanation: Not correct. That header selects an OpenBao namespace.
+  - id: d
+    text: "`X-Vault-Wrap-TTL`"
+    explanation: Not correct. That header asks for a wrapped response.
+  correct_option: b
+  explanation: 'Correct. The name still says Vault because OpenBao keeps the old names.
+    `Authorization: Bearer <token>` works as well.'
+- id: ats116-010-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read the fields of a KV version 2 response
+  source_readings:
+  - sections/section-010/module-01/course-01-requests-tokens-and-responses.md
+  prompt: You read a KV version 2 secret over HTTP. Where are your own fields in the
+    response?
+  options:
+  - id: a
+    text: In `.data` only, next to nothing else.
+    explanation: Not correct. `.data` holds both `data` and `metadata`.
+  - id: b
+    text: In `.data.metadata`.
+    explanation: Not correct. `metadata` holds the version and its times.
+  - id: c
+    text: In `.auth.client_token`.
+    explanation: Not correct. `auth` is filled only by a login.
+  - id: d
+    text: In `.data.data`.
+    explanation: Correct. The outer `data` belongs to the API and the inner `data`
+      to the KV version 2 engine.
+  correct_option: d
+  explanation: Correct. The outer `data` belongs to the API and the inner `data` to
+    the KV version 2 engine.
+- id: ats116-010-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Wrap a response
+  source_readings:
+  - sections/section-010/module-01/course-03-response-wrapping-and-headers.md
+  prompt: Which request header makes OpenBao return a wrapping token and sets how
+    long that token lives?
+  options:
+  - id: a
+    text: "`X-Vault-Token`"
+    explanation: Not correct. That header carries the token that makes the request.
+  - id: b
+    text: "`X-Vault-Wrap-TTL`"
+    explanation: Correct. Its value is a duration such as `5m`.
+  - id: c
+    text: "`X-Vault-Request`"
+    explanation: Not correct. That header marks the request as coming from an OpenBao
+      client.
+  - id: d
+    text: "`X-Vault-Namespace`"
+    explanation: Not correct. That header sends the request to a namespace.
+  correct_option: b
+  explanation: Correct. Its value is a duration such as `5m`.
+- id: ats116-010-q06
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Find the token in a login response
+  source_readings:
+  - sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
+  prompt: You log in with userpass over HTTP. Where does the new token appear in the
+    response?
+  options:
+  - id: a
+    text: In `auth.client_token`.
+    explanation: Correct. A login fills `auth`, not `data`.
+  - id: b
+    text: In `data.token`.
+    explanation: Not correct. For a login `data` is empty.
+  - id: c
+    text: In `wrap_info.token`.
+    explanation: Not correct. `wrap_info` is filled only for a wrapped response.
+  - id: d
+    text: In the `request_id` field.
+    explanation: Not correct. `request_id` identifies the request and is not a token.
+  correct_option: a
+  explanation: Correct. A login fills `auth`, not `data`.
+- id: ats116-010-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Use the KV version 2 paths
+  source_readings:
+  - sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
+  prompt: The CLI command `bao kv put secret/inventory/notes` writes a secret. Which
+    HTTP path does the same write?
+  options:
+  - id: a
+    text: "`secret/inventory/notes`, with the fields at the top level of the body."
+    explanation: Not correct. That is the CLI short form and does not work over HTTP.
+  - id: b
+    text: "`secret/metadata/inventory/notes`, with the fields in the body."
+    explanation: Not correct. The `metadata/` path holds the version history, not
+      the values.
+  - id: c
+    text: "`secret/data/inventory/notes`, with the fields at the top level of the
+      body."
+    explanation: 'Not correct. KV version 2 expects the fields inside `{"data": {...}}`.'
+  - id: d
+    text: "`secret/data/inventory/notes`, with the fields inside a `data` object in
+      the body."
+    explanation: Correct. The CLI hides the `data/` part of the path.
+  correct_option: d
+  explanation: Correct. The CLI hides the `data/` part of the path.
+- id: ats116-010-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: List the keys under a path
+  source_readings:
+  - sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
+  prompt: How do you list the names of the secrets under `inventory` in a KV version
+    2 engine mounted at `secret/`?
+  options:
+  - id: a
+    text: Send a plain `GET` to `secret/metadata/inventory`.
+    explanation: Not correct. That reads the metadata of a secret named `inventory`,
+      so it returns `404`.
+  - id: b
+    text: Send `LIST` to `secret/data/inventory`.
+    explanation: Not correct. Listing uses the `metadata/` path, not `data/`.
+  - id: c
+    text: Send `LIST`, or `GET` with `?list=true`, to `secret/metadata/inventory`.
+    explanation: Correct. Listing uses the `metadata/` path.
+  - id: d
+    text: Send `POST` to `secret/data/inventory` with an empty body.
+    explanation: Not correct. A `POST` writes a secret. It does not list names.
+  correct_option: c
+  explanation: Correct. Listing uses the `metadata/` path.
+- id: ats116-010-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Read a 403 for a working token
+  source_readings:
+  - sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
+  prompt: A program logs in with AppRole and gets a token. A write with that token
+    returns `403` and `permission denied`. What does this show?
+  options:
+  - id: a
+    text: The role ID and secret ID are wrong.
+    explanation: Not correct. The login worked, because the program has a token.
+  - id: b
+    text: The wrapping token was used twice.
+    explanation: Not correct. No wrapping token is involved in this request.
+  - id: c
+    text: OpenBao is sealed.
+    explanation: Not correct. A sealed server answers `503`.
+  - id: d
+    text: The token is valid, and its policy does not allow a write on that path.
+    explanation: Correct. The `inventory-lister` policy allows only `read` and `list`.
+  correct_option: d
+  explanation: Correct. The `inventory-lister` policy allows only `read` and `list`.
+- id: ats116-010-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: React to a failed first unwrap
+  source_readings:
+  - sections/section-010/module-01/course-03-response-wrapping-and-headers.md
+  prompt: The receiver unwraps a wrapping token for the first time and OpenBao says
+    the token is no longer valid. What must the sender do?
+  options:
+  - id: a
+    text: Ask for a new wrapping token of the same secret and carry on.
+    explanation: Not correct. The secret was already read by someone else.
+  - id: b
+    text: Treat the secret as leaked and replace it.
+    explanation: Correct. Someone else unwrapped it first.
+  - id: c
+    text: Retry the unwrap with a longer TTL.
+    explanation: Not correct. A used wrapping token cannot be opened again.
+  - id: d
+    text: Do nothing, because wrapping tokens expire and renew themselves.
+    explanation: Not correct. A wrapping token works exactly once.
+  correct_option: b
+  explanation: Correct. Someone else unwrapped it first.

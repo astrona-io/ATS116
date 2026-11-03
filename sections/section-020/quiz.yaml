@@ -1,0 +1,270 @@
+# Knowledge check for section 020. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats116-020
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-020
+  title: OpenBao Agent
+placement:
+  position: after
+  reading: sections/section-020/capstone/labs/lab-01/question.md
+questions:
+- id: ats116-020-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain auto-auth
+  source_readings:
+  - sections/section-020/module-01/course-01-auto-auth-and-sinks.md
+  prompt: What does auto-auth do in OpenBao Agent?
+  options:
+  - id: a
+    text: It renders templates into files.
+    explanation: Not correct. That is the job of the `template` stanza.
+  - id: b
+    text: It logs the agent in and logs in again by itself when the token cannot be
+      renewed any more.
+    explanation: Correct. This is the agent's login loop.
+  - id: c
+    text: It copies the root token into the pod.
+    explanation: Not correct. Auto-auth uses an auth method and never needs a stored
+      token.
+  - id: d
+    text: It starts the application as a child process.
+    explanation: Not correct. That is process supervisor mode with the `exec` stanza.
+  correct_option: b
+  explanation: Correct. This is the agent's login loop.
+- id: ats116-020-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Follow a Kubernetes auth login
+  source_readings:
+  - sections/section-020/module-01/course-01-auto-auth-and-sinks.md
+  prompt: The agent sends its pod's service account token to OpenBao. How does OpenBao
+    check it?
+  options:
+  - id: a
+    text: It compares the token with a password stored in the agent configuration.
+    explanation: Not correct. No password is involved.
+  - id: b
+    text: It accepts any token that starts with the pod name.
+    explanation: Not correct. OpenBao validates the token with the Kubernetes API.
+  - id: c
+    text: It reads the token from the sink file.
+    explanation: Not correct. The sink is where the agent writes the OpenBao token,
+      not what OpenBao reads.
+  - id: d
+    text: It asks the Kubernetes API with a TokenReview, then checks that the role
+      allows that service account and namespace.
+    explanation: Correct. The role turns the identity into an OpenBao token.
+  correct_option: d
+  explanation: Correct. The role turns the identity into an OpenBao token.
+- id: ats116-020-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Define a sink
+  source_readings:
+  - sections/section-020/module-01/course-01-auto-auth-and-sinks.md
+  prompt: What is a sink in the agent's `auto_auth` stanza?
+  options:
+  - id: a
+    text: A place where auto-auth writes the token after every login, such as a file.
+    explanation: Correct. A sink is needed only when another process must use the
+      token.
+  - id: b
+    text: A template that renders a secret into a file.
+    explanation: Not correct. That is a `template` stanza.
+  - id: c
+    text: The OpenBao address the agent talks to.
+    explanation: Not correct. That is set in the `vault` stanza.
+  - id: d
+    text: A setting for how often KV secrets are read again.
+    explanation: Not correct. That is `static_secret_render_interval` in `template_config`.
+  correct_option: a
+  explanation: Correct. A sink is needed only when another process must use the token.
+- id: ats116-020-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Find why a login fails
+  source_readings:
+  - sections/section-020/module-01/course-01-auto-auth-and-sinks.md
+  prompt: The agent logs in with the correct role name and gets `permission denied`.
+    What is the most likely cause?
+  options:
+  - id: a
+    text: The sink file has the wrong permissions.
+    explanation: Not correct. The sink is written after a successful login.
+  - id: b
+    text: The template uses `.Data.db_host`.
+    explanation: Not correct. A template error does not stop the login.
+  - id: c
+    text: The role binds another service account name or namespace than the pod uses.
+    explanation: Correct. A pod with another service account or namespace is refused
+      even with the right role name.
+  - id: d
+    text: The render interval is set to 15 seconds.
+    explanation: Not correct. The interval does not affect the login.
+  correct_option: c
+  explanation: Correct. A pod with another service account or namespace is refused
+    even with the right role name.
+- id: ats116-020-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Write the field path for KV version 2
+  source_readings:
+  - sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
+  prompt: Inside `{{ with secret "secret/data/inventory/config" }}`, which expression
+    gives the field `db_host` of a KV version 2 secret?
+  options:
+  - id: a
+    text: "`{{ .Data.db_host }}`"
+    explanation: Not correct. This renders `<no value>` because the field is one level
+      deeper.
+  - id: b
+    text: "`{{ .Data.metadata.db_host }}`"
+    explanation: Not correct. `metadata` holds the version and its times, not your
+      fields.
+  - id: c
+    text: "`{{ .Data.data.db_host }}`"
+    explanation: Correct. The first `.Data` is the API's, the second belongs to the
+      KV version 2 engine.
+  - id: d
+    text: "`{{ .db_host }}`"
+    explanation: Not correct. The fields are not at the top level of the response.
+  correct_option: c
+  explanation: Correct. The first `.Data` is the API's, the second belongs to the
+    KV version 2 engine.
+- id: ats116-020-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know when the agent renders again
+  source_readings:
+  - sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
+  prompt: The agent renders a KV version 2 secret. How long can a new version take
+    to reach the file if nothing is changed in `template_config`?
+  options:
+  - id: a
+    text: Up to five minutes, because the default `static_secret_render_interval`
+      is five minutes.
+    explanation: Correct. KV version 2 secrets have no lease, so the agent reads them
+      again on a timer.
+  - id: b
+    text: It reaches the file at once, because the agent watches OpenBao for changes.
+    explanation: Not correct. The agent does not watch OpenBao.
+  - id: c
+    text: Up to one hour, which is the lifetime of the token.
+    explanation: Not correct. The token lifetime does not set the render timer.
+  - id: d
+    text: Never, until the pod restarts.
+    explanation: Not correct. The agent reads the secret again on its own.
+  correct_option: a
+  explanation: Correct. KV version 2 secrets have no lease, so the agent reads them
+    again on a timer.
+- id: ats116-020-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Diagnose a `<no value>` line
+  source_readings:
+  - sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
+  prompt: After a template change, the file contains `DB_HOST=<no value>` and the
+    agent log shows no error. What happened?
+  options:
+  - id: a
+    text: The agent could not log in.
+    explanation: Not correct. If the login failed, no template would run and the file
+      would be missing.
+  - id: b
+    text: The template read `.Data.db_host`. The field is under `.Data.data`, and
+      nothing failed.
+    explanation: Correct. `error_on_missing_key = true` turns a missing field into
+      an error in the log.
+  - id: c
+    text: The `destination` points at a file nobody reads.
+    explanation: Not correct. The value is missing from the file that is rendered,
+      so the destination is not the cause.
+  - id: d
+    text: The policy denies the secret path.
+    explanation: Not correct. A denied read gives an error in the agent log.
+  correct_option: b
+  explanation: Correct. `error_on_missing_key = true` turns a missing field into an
+    error in the log.
+- id: ats116-020-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Find a wrong destination
+  source_readings:
+  - sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
+  prompt: The agent log shows successful renders, but the application returns `404`
+    for `/config`. Which cause fits?
+  options:
+  - id: a
+    text: The Kubernetes auth role does not exist.
+    explanation: Not correct. Without a role every login fails and nothing is rendered.
+  - id: b
+    text: The agent is in process supervisor mode.
+    explanation: Not correct. That mode has no `template` stanzas and sets environment
+      variables.
+  - id: c
+    text: The render interval is too short.
+    explanation: Not correct. A short interval only makes the agent read more often.
+  - id: d
+    text: The `destination` is not the file the application reads.
+    explanation: Correct. The agent writes a file nobody serves, and it reports no
+      error.
+  correct_option: d
+  explanation: Correct. The agent writes a file nobody serves, and it reports no error.
+- id: ats116-020-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know the rules of process supervisor mode
+  source_readings:
+  - sections/section-020/module-01/course-03-process-supervisor-mode.md
+  prompt: Which rule applies to process supervisor mode?
+  options:
+  - id: a
+    text: The agent needs exactly one `exec` stanza and at least one `env_template`,
+      and it cannot also have file `template` stanzas.
+    explanation: Correct. Run two agents if you need both.
+  - id: b
+    text: The agent needs one `exec` stanza and at least one file `template` stanza.
+    explanation: Not correct. File templates and `env_template` stanzas cannot be
+      mixed in one agent.
+  - id: c
+    text: The agent needs a `sink` stanza for every `env_template`.
+    explanation: Not correct. A sink is not required.
+  - id: d
+    text: The agent needs several `exec` stanzas, one per variable.
+    explanation: Not correct. There is exactly one `exec` stanza.
+  correct_option: a
+  explanation: Correct. Run two agents if you need both.
+- id: ats116-020-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: See what happens when a secret changes
+  source_readings:
+  - sections/section-020/module-01/course-03-process-supervisor-mode.md
+  prompt: In process supervisor mode with `restart_on_secret_changes = "always"`,
+    a secret changes. What does the agent do?
+  options:
+  - id: a
+    text: It changes the environment variables of the running child.
+    explanation: Not correct. Environment variables are read at start and cannot be
+      changed in a running process.
+  - id: b
+    text: It restarts the whole pod.
+    explanation: Not correct. Only the child process is replaced.
+  - id: c
+    text: It sends the child process `SIGTERM`, waits for it to stop and starts it
+      again with the new variables.
+    explanation: Correct. The pod and the agent keep running. Only the child is replaced.
+  - id: d
+    text: It does nothing until the next pod restart.
+    explanation: Not correct. That is the behaviour of `restart_on_secret_changes
+      = "never"`.
+  correct_option: c
+  explanation: Correct. The pod and the agent keep running. Only the child is replaced.

@@ -1,0 +1,250 @@
+# Knowledge check for section 030. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats116-030
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-030
+  title: OpenBao Proxy And Caching
+placement:
+  position: after
+  reading: sections/section-030/capstone/labs/lab-01/question.md
+questions:
+- id: ats116-030-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain use_auto_auth_token
+  source_readings:
+  - sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
+  prompt: With `use_auto_auth_token = true` in the `api_proxy` stanza, when does the
+    proxy add its own token to a request?
+  options:
+  - id: a
+    text: For every request, and it replaces any token in the request.
+    explanation: Not correct. That is the behaviour of the value `"force"`.
+  - id: b
+    text: Never, because the proxy only forwards requests.
+    explanation: Not correct. Adding the token is the purpose of the setting.
+  - id: c
+    text: Only for requests to `sys/health`.
+    explanation: Not correct. The setting does not depend on the path.
+  - id: d
+    text: Only when the request arrives without a token.
+    explanation: Correct. A request that carries its own token keeps it.
+  correct_option: d
+  explanation: Correct. A request that carries its own token keeps it.
+- id: ats116-030-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict a request with a bad token
+  source_readings:
+  - sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
+  prompt: 'A program sends a request through the proxy with `X-Vault-Token: not-a-real-token`.
+    The proxy uses `use_auto_auth_token = true`. What happens?'
+  options:
+  - id: a
+    text: The proxy forwards the token as it is and OpenBao answers `403`.
+    explanation: Correct. The caller's token is used, not the proxy's.
+  - id: b
+    text: The proxy replaces the token with its own and OpenBao answers `200`.
+    explanation: Not correct. Replacing a token happens only with `"force"`.
+  - id: c
+    text: The proxy refuses the request itself with `405`.
+    explanation: Not correct. The proxy does not judge the token.
+  - id: d
+    text: The proxy logs in again and retries the request.
+    explanation: Not correct. A bad caller token does not start a new login.
+  correct_option: a
+  explanation: Correct. The caller's token is used, not the proxy's.
+- id: ats116-030-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose between true and force
+  source_readings:
+  - sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
+  prompt: When is `use_auto_auth_token = "force"` the right choice?
+  options:
+  - id: a
+    text: When clients should keep their own tokens.
+    explanation: Not correct. That is what `true` does.
+  - id: b
+    text: When caching must be turned on.
+    explanation: Not correct. Caching is turned on by the `cache` stanza.
+  - id: c
+    text: When every client of the proxy must act with the proxy's identity.
+    explanation: Correct. It replaces any token in the request with the proxy's token.
+  - id: d
+    text: When the proxy has no auto-auth method.
+    explanation: Not correct. The proxy needs auto-auth to have a token to add.
+  correct_option: c
+  explanation: Correct. It replaces any token in the request with the proxy's token.
+- id: ats116-030-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose between Agent and Proxy
+  source_readings:
+  - sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
+  prompt: An application already calls the OpenBao HTTP API with a client library.
+    Which component fits?
+  options:
+  - id: a
+    text: OpenBao Agent with templates only.
+    explanation: Not correct. Templates suit applications that read files.
+  - id: b
+    text: OpenBao Proxy, which adds a token to its requests.
+    explanation: Correct. Agent templates suit programs that read files or environment
+      variables.
+  - id: c
+    text: Process supervisor mode with an `exec` stanza.
+    explanation: Not correct. That mode suits programs that read environment variables.
+  - id: d
+    text: A static root token in the application's environment.
+    explanation: Not correct. Never give an application a long-lived token.
+  correct_option: b
+  explanation: Correct. Agent templates suit programs that read files or environment
+    variables.
+- id: ats116-030-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain the 127.0.0.1 listener
+  source_readings:
+  - sections/section-030/module-01/course-02-proxy-as-a-sidecar.md
+  prompt: Why does the proxy listener bind to `127.0.0.1:8100` in the sidecar?
+  options:
+  - id: a
+    text: Containers in one pod share a network namespace, and nothing outside the
+      pod can reach an address bound to `127.0.0.1`.
+    explanation: Correct. Only the application container can send requests to the
+      proxy.
+  - id: b
+    text: Port 8100 is the only port OpenBao accepts.
+    explanation: Not correct. OpenBao listens on its own port, `8200` here.
+  - id: c
+    text: The Service routes port 8100 to the pod.
+    explanation: Not correct. The Service must not expose port 8100.
+  - id: d
+    text: "`127.0.0.1` makes the proxy use TLS."
+    explanation: Not correct. The listener in this course has no TLS.
+  correct_option: a
+  explanation: Correct. Only the application container can send requests to the proxy.
+- id: ats116-030-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Name the risk of a shared proxy
+  source_readings:
+  - sections/section-030/module-01/course-02-proxy-as-a-sidecar.md
+  prompt: What is the main risk of running one shared proxy Deployment with its own
+    Service for many applications?
+  options:
+  - id: a
+    text: The proxy cannot log in with a service account.
+    explanation: Not correct. It can log in with the service account of its own pod.
+  - id: b
+    text: Every pod that can reach the Service acts with the proxy's identity and
+      policies.
+    explanation: Correct. The proxy adds its token to every request without one.
+  - id: c
+    text: The proxy cannot renew its token.
+    explanation: Not correct. Renewal does not depend on the deployment style.
+  - id: d
+    text: OpenBao refuses requests from a Service.
+    explanation: Not correct. OpenBao has no such rule.
+  correct_option: b
+  explanation: Correct. The proxy adds its token to every request without one.
+- id: ats116-030-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Bind a role narrowly
+  source_readings:
+  - sections/section-030/module-01/course-02-proxy-as-a-sidecar.md
+  prompt: How should the Kubernetes auth role for a proxy sidecar bind service accounts?
+  options:
+  - id: a
+    text: To `*` service accounts in one namespace.
+    explanation: Not correct. Any pod in that namespace could then use the role.
+  - id: b
+    text: To the `default` service account of every namespace.
+    explanation: Not correct. Many pods share that account and it is not specific
+      to the application.
+  - id: c
+    text: To no service account, because the proxy uses a static token.
+    explanation: Not correct. A static token is exactly what the sidecar replaces.
+  - id: d
+    text: To exactly one service account in exactly one namespace.
+    explanation: Correct. A `*` in either field lets any pod log in as this application.
+  correct_option: d
+  explanation: Correct. A `*` in either field lets any pod log in as this application.
+- id: ats116-030-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know what the cache stores
+  source_readings:
+  - sections/section-030/module-01/course-03-caching-tokens-and-leases.md
+  prompt: Which responses does the OpenBao Proxy cache store?
+  options:
+  - id: a
+    text: Every KV version 2 read.
+    explanation: Not correct. KV reads reach OpenBao every time.
+  - id: b
+    text: Every response to a `GET`.
+    explanation: Not correct. Only responses that create a token or a lease are cached.
+  - id: c
+    text: New tokens and leased secrets, which the proxy renews itself.
+    explanation: Correct. A KV version 2 read has no lease and is never cached.
+  - id: d
+    text: Only responses to `sys/health`.
+    explanation: Not correct. Health checks are not cached.
+  correct_option: c
+  explanation: Correct. A KV version 2 read has no lease and is never cached.
+- id: ats116-030-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Clear a stale cache entry
+  source_readings:
+  - sections/section-030/module-01/course-03-caching-tokens-and-leases.md
+  prompt: A token was revoked directly on OpenBao, not through the proxy. The proxy
+    still hands out the cached response. What can you do?
+  options:
+  - id: a
+    text: Wait, because the proxy sees every revocation on its own.
+    explanation: Not correct. The proxy sees only revocations sent through it.
+  - id: b
+    text: Send a request to the proxy's `/proxy/v1/cache-clear` endpoint.
+    explanation: Correct. `type` can be `all`, `request_path`, `lease`, `token` or
+      `token_accessor`.
+  - id: c
+    text: Restart OpenBao.
+    explanation: Not correct. The cache lives in the proxy, not in OpenBao.
+  - id: d
+    text: Set `use_auto_auth_token` to `false`.
+    explanation: Not correct. That setting does not control the cache.
+  correct_option: b
+  explanation: Correct. `type` can be `all`, `request_path`, `lease`, `token` or `token_accessor`.
+- id: ats116-030-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know what a stopped proxy does
+  source_readings:
+  - sections/section-030/module-01/course-03-caching-tokens-and-leases.md
+  prompt: The proxy stops. What happens to the tokens and leases it cached?
+  options:
+  - id: a
+    text: The proxy forgets them and stops renewing them. They are not revoked and
+      expire on their own schedule.
+    explanation: Correct. A `persist` block can restore the cache after a restart.
+  - id: b
+    text: OpenBao revokes all of them at once.
+    explanation: Not correct. Stopping the proxy does not revoke anything.
+  - id: c
+    text: They stay valid forever.
+    explanation: Not correct. Without renewal they expire at their TTL.
+  - id: d
+    text: The proxy writes them to a sink first.
+    explanation: Not correct. A sink is for the auto-auth token, not for the cache.
+  correct_option: a
+  explanation: Correct. A `persist` block can restore the cache after a restart.

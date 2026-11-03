@@ -126,7 +126,10 @@ modules:
             url: https://openbao.org/docs/auth/approle/
           - name: "KV version 2 secrets engine"
             url: https://openbao.org/docs/secrets/kv/kv-v2/
-
+      - type: quiz
+        title: "Knowledge Check: The OpenBao HTTP API"
+        path: sections/section-010/quiz.yaml
+        pass_score: 70
   - id: module-020
     title: "OpenBao Agent"
     description: >
@@ -200,7 +203,10 @@ modules:
             url: https://openbao.org/docs/agent-and-proxy/agent/template/
           - name: "Policies"
             url: https://openbao.org/docs/concepts/policies/
-
+      - type: quiz
+        title: "Knowledge Check: OpenBao Agent"
+        path: sections/section-020/quiz.yaml
+        pass_score: 70
   - id: module-030
     title: "OpenBao Proxy And Caching"
     description: >
@@ -271,7 +277,10 @@ modules:
             url: https://openbao.org/docs/auth/kubernetes/
           - name: "Tokens"
             url: https://openbao.org/docs/concepts/tokens/
-
+      - type: quiz
+        title: "Knowledge Check: OpenBao Proxy And Caching"
+        path: sections/section-030/quiz.yaml
+        pass_score: 70
   - id: module-040
     title: "The Kubernetes Agent Injector"
     description: >
@@ -345,3 +354,11 @@ modules:
             url: https://openbao.org/docs/platform/k8s/injector/examples/
           - name: "OpenBao Agent templates"
             url: https://openbao.org/docs/agent-and-proxy/agent/template/
+      - type: quiz
+        title: "Knowledge Check: The Kubernetes Agent Injector"
+        path: sections/section-040/quiz.yaml
+        pass_score: 70
+      - type: quiz
+        title: "Final Domain Quiz"
+        path: sections/final-domain-quiz.yaml
+        pass_score: 70

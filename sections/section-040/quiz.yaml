@@ -1,0 +1,258 @@
+# Knowledge check for section 040. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats116-040
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-040
+  title: The Kubernetes Agent Injector
+placement:
+  position: after
+  reading: sections/section-040/capstone/labs/lab-01/question.md
+questions:
+- id: ats116-040-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Know the annotation prefix
+  source_readings:
+  - sections/section-040/module-01/course-01-how-the-injector-works.md
+  prompt: Which annotation prefix does the injector installed by the chart read?
+  options:
+  - id: a
+    text: "`openbao.openbao.com/`"
+    explanation: Not correct. No released injector uses this prefix, and such annotations
+      are ignored silently.
+  - id: b
+    text: "`openbao.org/`"
+    explanation: Not correct. The injector does not read this prefix.
+  - id: c
+    text: "`vault.hashicorp.com/`"
+    explanation: Correct. The injector keeps the Vault names, so annotations such
+      as `vault.hashicorp.com/agent-inject` are used.
+  - id: d
+    text: "`bao.io/`"
+    explanation: Not correct. The injector does not read this prefix.
+  correct_option: c
+  explanation: Correct. The injector keeps the Vault names, so annotations such as
+    `vault.hashicorp.com/agent-inject` are used.
+- id: ats116-040-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Know where secrets are written
+  source_readings:
+  - sections/section-040/module-01/course-01-how-the-injector-works.md
+  prompt: In which directory do injected secrets appear inside the pod?
+  options:
+  - id: a
+    text: "`/openbao/secrets`"
+    explanation: Not correct. With this injector the directory is `/vault/secrets`.
+  - id: b
+    text: "`/vault/secrets`"
+    explanation: Correct. It is a shared in-memory volume mounted in every container.
+  - id: c
+    text: "`/etc/secrets`"
+    explanation: Not correct. The injector does not use this directory.
+  - id: d
+    text: "`/var/run/secrets/kubernetes.io/serviceaccount`"
+    explanation: Not correct. That directory holds the service account token.
+  correct_option: b
+  explanation: Correct. It is a shared in-memory volume mounted in every container.
+- id: ats116-040-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: List what the injector adds
+  source_readings:
+  - sections/section-040/module-01/course-01-how-the-injector-works.md
+  prompt: 'The injector changes a pod that has `vault.hashicorp.com/agent-inject:
+    "true"`. What does it add?'
+  options:
+  - id: a
+    text: Only a sidecar `vault-agent`, with no init container.
+    explanation: Not correct. The init container is added too, and it runs first.
+  - id: b
+    text: A new Deployment named `vault-agent`.
+    explanation: Not correct. The injector changes the pod and never the Deployment.
+  - id: c
+    text: A Kubernetes Secret with the rendered values.
+    explanation: Not correct. The injector writes files into an in-memory volume.
+  - id: d
+    text: An in-memory volume at `/vault/secrets`, an init container `vault-agent-init`
+      and a sidecar `vault-agent`.
+    explanation: Correct. The init container writes the secrets before the application
+      starts. The sidecar keeps them up to date.
+  correct_option: d
+  explanation: Correct. The init container writes the secrets before the application
+    starts. The sidecar keeps them up to date.
+- id: ats116-040-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Understand failurePolicy Ignore
+  source_readings:
+  - sections/section-040/module-01/course-01-how-the-injector-works.md
+  prompt: 'The webhook has `failurePolicy: Ignore` and the injector is down when a
+    pod is created. What happens?'
+  options:
+  - id: a
+    text: Kubernetes creates the pod unchanged, without an agent, and nothing reports
+      it.
+    explanation: Correct. Delete the pod after the injector runs again so it is injected.
+  - id: b
+    text: Kubernetes refuses to create the pod.
+    explanation: Not correct. That would be the behaviour of `Fail`.
+  - id: c
+    text: Kubernetes waits until the injector is back.
+    explanation: Not correct. The pod is created at once.
+  - id: d
+    text: The pod is injected later, when the injector starts.
+    explanation: Not correct. The injector changes pods only when they are created.
+  correct_option: a
+  explanation: Correct. Delete the pod after the injector runs again so it is injected.
+- id: ats116-040-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Place the annotations
+  source_readings:
+  - sections/section-040/module-01/course-02-annotations-and-templates.md
+  prompt: Where must the injector annotations be set for a Deployment?
+  options:
+  - id: a
+    text: On the Deployment's own `metadata.annotations`.
+    explanation: Not correct. Kubernetes does not copy them to the pods.
+  - id: b
+    text: On the Service of the application.
+    explanation: Not correct. The injector does not read Services.
+  - id: c
+    text: On the namespace.
+    explanation: Not correct. The injector reads annotations of the pod.
+  - id: d
+    text: On the pod template, in `spec.template.metadata.annotations`.
+    explanation: Correct. The injector looks at pods.
+  correct_option: d
+  explanation: Correct. The injector looks at pods.
+- id: ats116-040-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Match secret and template names
+  source_readings:
+  - sections/section-040/module-01/course-02-annotations-and-templates.md
+  prompt: The annotations `agent-inject-secret-config.env` and `agent-inject-template-db.env`
+    are both set. What is the result?
+  options:
+  - id: a
+    text: The file `config.env` is rendered with the template `db.env`.
+    explanation: Not correct. The names must match.
+  - id: b
+    text: The injector refuses the pod.
+    explanation: Not correct. It injects the pod and uses the default format.
+  - id: c
+    text: The template does not apply to the file `config.env`, so that file gets
+      the default format.
+    explanation: Correct. A template applies to the secret with the same name.
+  - id: d
+    text: The file is named `db.env`.
+    explanation: Not correct. The file name comes from the secret annotation.
+  correct_option: c
+  explanation: Correct. A template applies to the secret with the same name.
+- id: ats116-040-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know pre-populate-only
+  source_readings:
+  - sections/section-040/module-01/course-02-annotations-and-templates.md
+  prompt: 'What does `vault.hashicorp.com/agent-pre-populate-only: "true"` do?'
+  options:
+  - id: a
+    text: It injects only the init container, so the file is written once at start
+      and no sidecar keeps it up to date.
+    explanation: Correct. The file keeps its value until the pod is replaced.
+  - id: b
+    text: It injects only the sidecar and skips the init container.
+    explanation: Not correct. The init container is the part that remains.
+  - id: c
+    text: It makes the file read-only for the application.
+    explanation: Not correct. File permissions are set with `agent-inject-perms-<name>`.
+  - id: d
+    text: It turns off the injection.
+    explanation: Not correct. The init container is still injected.
+  correct_option: a
+  explanation: Correct. The file keeps its value until the pod is replaced.
+- id: ats116-040-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know how annotation changes reach pods
+  source_readings:
+  - sections/section-040/module-01/course-02-annotations-and-templates.md
+  prompt: You edit the annotations in the pod template of a Deployment. What happens
+    to the running pods?
+  options:
+  - id: a
+    text: The injector updates the running pods in place.
+    explanation: Not correct. The injector changes pods only when they are created.
+  - id: b
+    text: The Deployment rolls out new pods, and the injector reads the new annotations
+      when it changes each new pod. Existing pods never pick them up.
+    explanation: Correct. Wait for the rollout to finish.
+  - id: c
+    text: Nothing happens until the injector restarts.
+    explanation: Not correct. A changed pod template starts a rollout.
+  - id: d
+    text: The running pods restart their sidecar with the new annotations.
+    explanation: Not correct. A sidecar cannot read new annotations of a running pod.
+  correct_option: b
+  explanation: Correct. Wait for the rollout to finish.
+- id: ats116-040-q09
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Ask the first troubleshooting question
+  source_readings:
+  - sections/section-040/module-01/course-03-troubleshooting-injection.md
+  prompt: An application has no secrets. What is the first question to ask?
+  options:
+  - id: a
+    text: 'Does the pod carry the annotation `vault.hashicorp.com/agent-inject-status:
+      injected`?'
+    explanation: Correct. A pod without it was never changed, and OpenBao cannot be
+      the cause yet.
+  - id: b
+    text: Is the OpenBao server sealed?
+    explanation: Not correct. A sealed server is not the first thing to check.
+  - id: c
+    text: What does the application log say?
+    explanation: Not correct. In a stuck pod the application has not started.
+  - id: d
+    text: Is the policy `inventory-reader` correct?
+    explanation: Not correct. Policies matter only after the pod was injected.
+  correct_option: a
+  explanation: Correct. A pod without it was never changed, and OpenBao cannot be
+    the cause yet.
+- id: ats116-040-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Debug a stuck init container
+  source_readings:
+  - sections/section-040/module-01/course-03-troubleshooting-injection.md
+  prompt: An injected pod stays in `Init:0/1`. Which log do you read first?
+  options:
+  - id: a
+    text: The log of the `app` container.
+    explanation: Not correct. The application has not started yet.
+  - id: b
+    text: The log of the Kubernetes scheduler.
+    explanation: Not correct. `Init:0/1` almost always means the agent cannot log
+      in or read the secret.
+  - id: c
+    text: The log of the `tester` pod.
+    explanation: Not correct. That pod is a client and is not part of the injected
+      pod.
+  - id: d
+    text: The log of the `vault-agent-init` container.
+    explanation: Correct. It shows whether the login or the render failed, for example
+      with `permission denied`.
+  correct_option: d
+  explanation: Correct. It shows whether the login or the render failed, for example
+    with `permission denied`.
