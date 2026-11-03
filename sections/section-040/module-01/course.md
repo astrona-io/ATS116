@@ -4,7 +4,7 @@ The `inventory` app in this module is an `nginx` server that serves `/vault/secr
 
 The agent injector is a Kubernetes mutating admission webhook: a service the Kubernetes API server calls before it stores a new pod, and which may change the pod. Keep one sentence in mind: **the annotations go on the pod template, the role must match the pod's service account, and the application only reads a file.**
 
-The module has three parts. **How The Agent Injector Works** looks at what the Helm chart installed and at an injected pod. **Annotations And Templates** writes the annotations for a secret, its template and its render interval; a graded lab follows it. **Troubleshooting Injection** walks through the ways injection fails and the one command that tells them apart.
+The module has four parts. **How The Agent Injector Works** looks at what the Helm chart installed and at an injected pod. **Annotations And Templates** writes the annotations for a secret, its template and its render interval; a graded lab follows it. **Troubleshooting Injection** walks through the ways injection fails and the one command that tells them apart. **Operating The Injector** covers the webhook, its failure policy and the chart settings that apply to every pod in the cluster.
 
 ## Learning objectives
 
@@ -16,6 +16,7 @@ After this module you can:
 - Bind a Kubernetes auth role to an application's service account with a narrow policy.
 - Tell apart a pod that was not injected from an injected pod whose agent cannot log in or render.
 - Choose between the injector, an agent sidecar you write yourself, and OpenBao Proxy.
+- Explain `failurePolicy`, the injector replicas and selectors, and what happens to a pod created while the injector is down.
 
 ## Before you start
 

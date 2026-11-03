@@ -20,10 +20,10 @@ deep-dive parts, summary, playground, graded lab) and a capstone.
 
 | Section | Title | Modules | Labs | Topic |
 | --- | --- | --- | --- | --- |
-| [010](sections/section-010) | The OpenBao HTTP API | 1 | 1 + capstone | HTTP API |
-| [020](sections/section-020) | OpenBao Agent | 1 | 1 + capstone | Agent |
-| [030](sections/section-030) | OpenBao Proxy And Caching | 1 | 1 + capstone | Proxy |
-| [040](sections/section-040) | The Kubernetes Agent Injector | 1 | 1 + capstone | Injector |
+| [010](sections/section-010) | The OpenBao HTTP API | 2 | 2 + capstone | HTTP API |
+| [020](sections/section-020) | OpenBao Agent | 3 | 3 + capstone | Agent |
+| [030](sections/section-030) | OpenBao Proxy And Caching | 2 | 2 + capstone | Proxy |
+| [040](sections/section-040) | The Kubernetes Agent Injector | 2 | 2 + capstone | Injector |
 
 The order goes from the most direct way to deliver a secret to the most
 automatic one: the application calls the API itself, then an agent writes a
@@ -36,10 +36,15 @@ adds the agent from annotations.
 
 | Module | Reader | Parts | Labs |
 | --- | --- | --- | --- |
-| 010-01 | [Talk To OpenBao Over HTTP](sections/section-010/module-01/course.md) | 3 | [lab-01](sections/section-010/module-01/labs/lab-01) |
-| 020-01 | [Render Secrets Into Files With OpenBao Agent](sections/section-020/module-01/course.md) | 3 | [lab-01](sections/section-020/module-01/labs/lab-01) |
-| 030-01 | [Give Applications A Token-Free Path With OpenBao Proxy](sections/section-030/module-01/course.md) | 3 | [lab-01](sections/section-030/module-01/labs/lab-01) |
-| 040-01 | [Deliver Secrets To Pods With The Agent Injector](sections/section-040/module-01/course.md) | 3 | [lab-01](sections/section-040/module-01/labs/lab-01) |
+| 010-01 | [Talk To OpenBao Over HTTP](sections/section-010/module-01/course.md) | 4 | [lab-01](sections/section-010/module-01/labs/lab-01) |
+| 010-02 | [Tokens, Permissions And Server State Over HTTP](sections/section-010/module-02/course.md) | 4 | [lab-01](sections/section-010/module-02/labs/lab-01) |
+| 020-01 | [Render Secrets Into Files With OpenBao Agent](sections/section-020/module-01/course.md) | 4 | [lab-01](sections/section-020/module-01/labs/lab-01) |
+| 020-02 | [Auto-Auth Methods, Secret IDs And Sinks](sections/section-020/module-02/course.md) | 4 | [lab-01](sections/section-020/module-02/labs/lab-01) |
+| 020-03 | [Templates In Depth: Language, Options And Schedule](sections/section-020/module-03/course.md) | 4 | [lab-01](sections/section-020/module-03/labs/lab-01) |
+| 030-01 | [Give Applications A Token-Free Path With OpenBao Proxy](sections/section-030/module-01/course.md) | 4 | [lab-01](sections/section-030/module-01/labs/lab-01) |
+| 030-02 | [Listeners, TLS And Token Control In OpenBao Proxy](sections/section-030/module-02/course.md) | 4 | [lab-01](sections/section-030/module-02/labs/lab-01) |
+| 040-01 | [Deliver Secrets To Pods With The Agent Injector](sections/section-040/module-01/course.md) | 4 | [lab-01](sections/section-040/module-01/labs/lab-01) |
+| 040-02 | [Annotations In Depth](sections/section-040/module-02/course.md) | 4 | [lab-01](sections/section-040/module-02/labs/lab-01) |
 
 ---
 

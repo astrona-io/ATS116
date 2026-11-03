@@ -11,6 +11,8 @@ This section runs the proxy as a sidecar container that only its own pod can rea
 - Why the listener binds to `127.0.0.1` and why the proxy runs in the application's pod.
 - What the proxy caches: new tokens and leased secrets created through it, and their renewals.
 - Clearing the cache with `/proxy/v1/cache-clear`, and when a cached entry goes stale.
+- When to use the proxy and when to use the agent.
+- Listener types, TLS to OpenBao, and troubleshooting a proxy from its log.
 
 ## The learning path
 
@@ -21,7 +23,16 @@ The module starts at its landing page, which also launches the playground. The p
 1. The API Proxy And The Auto-Auth Token
 2. Running The Proxy Next To The Application, followed by the lab **Serve Secrets To An App Through An OpenBao Proxy Sidecar**
 3. Caching Tokens And Leases
-4. Summary
+4. Choosing Between The Proxy And The Agent
+5. Summary
+
+### 2. Listeners, TLS And Token Control In OpenBao Proxy
+
+1. Listeners And Who Can Reach The Proxy
+2. The vault Stanza And TLS To OpenBao
+3. Whose Token The Proxy Sends, followed by the lab **Make The Proxy Use Its Own Token**
+4. Logs And Troubleshooting
+5. Summary
 
 ## Section capstone: Move An App From A Static Token To OpenBao Proxy
 

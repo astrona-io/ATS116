@@ -8,11 +8,12 @@ The proxy reads an HCL configuration with a `vault` stanza for the server addres
 
 Because the proxy lends its identity to anyone who reaches it, it belongs in the application's pod as a sidecar, with its listener on `127.0.0.1`. Containers in the pod share that address; nothing outside the pod can reach it, and the Service exposes only the application's port. Each application gets its own service account, its own role and its own proxy. Adding a proxy takes a service account, a role bound to exactly that account and namespace, a ConfigMap with the configuration, and a `proxy` container; the application container stays as it is.
 
-A `cache` stanza makes the proxy keep new tokens and leased secrets created through it, and renew them. KV version 2 reads have no lease and are never cached. Revocations through the proxy evict their entries; revocations made directly on OpenBao do not, and `/proxy/v1/cache-clear` empties the cache by type. The key facts to remember are these:
+A `cache` stanza makes the proxy keep new tokens and leased secrets created through it, and renew them. KV version 2 reads have no lease and are never cached. Revocations through the proxy evict their entries; revocations made directly on OpenBao do not, and `/proxy/v1/cache-clear` empties the cache by type. The proxy and the agent share the login code and differ in what they hand to the application: the proxy forwards API requests, the agent writes files. The key facts to remember are these:
 
 - The application sends no token; the proxy adds its auto-auth token.
 - Listener on `127.0.0.1`, proxy as a sidecar, port not in the Service.
 - One service account, one role, one narrow policy per application.
 - Caching helps logins and dynamic secrets, not KV reads.
+- Proxy for code that calls the API, agent for code that reads files, both only when the application needs both.
 
 <!-- astrona:playground:destroy -->

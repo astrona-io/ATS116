@@ -11,6 +11,8 @@ This section uses the injector that the `openbao` Helm chart installs. Its names
 - The annotations for secrets, templates, the role and the render interval, and where on a Deployment they belong.
 - The init container and the sidecar, and `agent-pre-populate-only`.
 - Finding out why a pod was not injected, or why its init container never finishes.
+- Operating the injector from the Helm chart values.
+- Several secrets in one pod, file names, templates, container tuning, roles and auth paths.
 
 ## The learning path
 
@@ -21,7 +23,16 @@ The module starts at its landing page, which also launches the playground. The p
 1. How The Agent Injector Works
 2. Annotations And Templates, followed by the lab **Deliver Secrets To The Inventory Pods Without Code Changes**
 3. Troubleshooting Injection
-4. Summary
+4. Operating The Injector
+5. Summary
+
+### 2. Annotations In Depth
+
+1. Several Secrets, Several Files
+2. Shaping The Files, followed by the lab **Inject A Second Secret As A JSON File**
+3. Tuning The Agent Containers
+4. Roles, Auth Paths And Connections
+5. Summary
 
 ## Section capstone: Repair Secret Injection For The Inventory App
 

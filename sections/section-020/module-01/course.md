@@ -4,7 +4,7 @@ The `inventory` app is an `nginx` web server that serves one file, its configura
 
 OpenBao Agent is a client process, started with `bao agent`, that does three jobs for an application: it logs in on its own, it keeps its token renewed, and it renders secrets into files or environment variables. Keep one sentence in mind: **auto-auth gets the token, the template uses it, and the application only ever reads a file.**
 
-The module has three parts. **Auto-Auth And Sinks** looks at how the agent logs in with the pod's service account and where it keeps the token. **Rendering Secrets With Templates** writes the configuration file and makes it follow a new secret version; a graded lab follows it. **Secrets As Environment Variables With Process Supervisor Mode** passes the same secret to a program as environment variables instead of a file.
+The module has four parts. **Auto-Auth And Sinks** looks at how the agent logs in with the pod's service account and where it keeps the token. **Rendering Secrets With Templates** writes the configuration file and makes it follow a new secret version; a graded lab follows it. **Secrets As Environment Variables With Process Supervisor Mode** passes the same secret to a program as environment variables instead of a file. **Agent Configuration And Troubleshooting** reads the remaining settings and ties each common failure to a stanza and a log line.
 
 ## Learning objectives
 
@@ -16,6 +16,7 @@ After this module you can:
 - Explain when the agent renders a secret again, and set `static_secret_render_interval`.
 - Read the agent's log to find a failed login or a failed render.
 - Run a program with secrets as environment variables in process supervisor mode.
+- Raise the agent's log level and match a symptom to the stanza that causes it.
 
 ## Before you start
 

@@ -13,6 +13,7 @@ Troubleshooting starts with one question: does the pod carry `vault.hashicorp.co
 - Annotations on `spec.template.metadata.annotations`, prefix `vault.hashicorp.com/`.
 - Secrets in `/vault/secrets/<name>`; the init container must finish before the application starts.
 - Role bound to the pod's own service account, policy as narrow as the secret paths.
+- Run more than one injector replica; `failurePolicy: Ignore` lets pods start without an agent.
 - No status annotation means not injected; `Init:0/1` means the agent cannot log in or read.
 
 <!-- astrona:playground:destroy -->

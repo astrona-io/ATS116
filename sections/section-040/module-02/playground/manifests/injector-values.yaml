@@ -1,0 +1,14 @@
+# Agent injector for section 040 environments, layered on openbao-values.yaml.
+# The chart's default injector is HashiCorp's vault-k8s: the openbao-k8s
+# project publishes no image (checked 2026-10-22). The agent it injects is the
+# OpenBao image, which ships a `vault` symlink to `bao` for this reason.
+injector:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: hashicorp/vault-k8s
+    tag: "1.7.6"
+  agentImage:
+    registry: quay.io
+    repository: openbao/openbao
+    tag: "2.7.1"

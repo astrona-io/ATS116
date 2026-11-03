@@ -1,0 +1,28 @@
+# Tokens, Permissions And Server State Over HTTP (PLAYGROUND) - Playground environment
+# A clean sandbox: it spins up, runs OS prep, then stays running for free
+# exploration. No task, no grading, no `astrona submit`.
+# Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-116-playground-010-02"
+  docs:
+    guide: "docs/overview.md"
+bootstrap:
+  init:
+    - name: "prepare"
+      description: "Install the bao CLI and OpenBao 2.7.1 (initialized and unsealed), seed it, and start the module's workloads."
+      type: "file"
+      source: "bootstrap/prepare.sh"
+  manifests:
+    - name: "lab-start"
+      description: "The tester client pod in the namespace clients."
+      type: "file"
+      source: "manifests/lab-start.yaml"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - docker.io/hashicorp/vault-k8s:1.7.6
+      - nicolaka/netshoot:v0.13
+      - quay.io/openbao/openbao:2.7.1

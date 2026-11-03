@@ -1,0 +1,34 @@
+# Helm values for OpenBao v2.7.1 (chart openbao 0.30.4) in every ATS116
+# environment. One address everywhere: http://openbao.localtest.me:8200.
+# Inside the cluster a CoreDNS rewrite sends that name to the Service
+# `openbao` in the namespace `openbao`; on the reader's machine a
+# port-forward of port 8200 does. The listener has no TLS: lab-only.
+fullnameOverride: openbao
+injector:
+  enabled: false
+server:
+  image:
+    tag: "2.7.1"
+  standalone:
+    enabled: true
+    config: |
+      ui = true
+
+      listener "tcp" {
+        tls_disable     = 1
+        address         = "[::]:8200"
+        cluster_address = "[::]:8201"
+      }
+
+      storage "raft" {
+        path    = "/openbao/data"
+        node_id = "openbao-0"
+      }
+
+      api_addr     = "http://openbao.localtest.me:8200"
+      cluster_addr = "http://openbao-0.openbao-internal:8201"
+  dataStorage:
+    enabled: true
+    size: 1Gi
+ui:
+  enabled: true

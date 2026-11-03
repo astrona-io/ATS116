@@ -4,7 +4,7 @@ The `inventory` app in this module is an `nginx` server that answers `/config` b
 
 OpenBao Proxy is a client process, started with `bao proxy`, that forwards HTTP API requests to OpenBao. Keep one sentence in mind: **the proxy turns "anyone who can reach me" into "the identity I logged in as", so only the application may reach it.** That is why it listens on `127.0.0.1` inside the pod.
 
-The module has three parts. **The API Proxy And The Auto-Auth Token** reads the proxy configuration and follows one request through it. **Running The Proxy Next To The Application** explains the sidecar pattern and why the listener must stay inside the pod; a graded lab follows it. **Caching Tokens And Leases** shows what the proxy keeps and renews, and how to clear it.
+The module has four parts. **The API Proxy And The Auto-Auth Token** reads the proxy configuration and follows one request through it. **Running The Proxy Next To The Application** explains the sidecar pattern and why the listener must stay inside the pod; a graded lab follows it. **Caching Tokens And Leases** shows what the proxy keeps and renews, and how to clear it. **Choosing Between Proxy And Agent** gives the questions that decide which one an application needs, and when it needs both.
 
 ## Learning objectives
 
@@ -15,7 +15,7 @@ After this module you can:
 - Run the proxy as a sidecar that logs in with the pod's service account.
 - Keep the proxy reachable only from inside its own pod, and prove it.
 - Explain which responses the proxy caches and renews, and clear its cache.
-- Choose between OpenBao Proxy and OpenBao Agent for an application.
+- Choose between OpenBao Proxy and OpenBao Agent, or both, for an application, with the questions that decide it.
 
 ## Before you start
 

@@ -8,6 +8,8 @@ A request names a path and a method and carries its token in the `X-Vault-Token`
 
 KV version 2 splits every secret into a `data/` path for its values and a `metadata/` path for its versions and names. Writes put the fields inside a `data` object, reads return them in `.data.data`, and lists use the `LIST` method or `?list=true` on the `metadata/` path. A person logs in with userpass and a password; a program logs in with AppRole and a role ID plus a secret ID. Either way the token it gets back carries only the policies of that identity.
 
+KV version 2 keeps every version of a secret. A delete marks a version and can be undone, a destroy removes the data for good, and deleting the metadata removes everything. A write with `cas` succeeds only when the writer saw the current version, which stops two clients from overwriting each other.
+
 Response wrapping hands a secret over safely. The `X-Vault-Wrap-TTL` header makes OpenBao keep the answer and return a single-use wrapping token. The receiver checks the token with `sys/wrapping/lookup`, which does not use it, and opens it once with `sys/wrapping/unwrap`. A failed first unwrap means someone else opened it, and the secret must be replaced. The key facts to remember are these:
 
 - `/v1/<path>`, the `X-Vault-Token` header, JSON in and out.

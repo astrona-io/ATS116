@@ -18,291 +18,651 @@ questions:
 - id: ats116-final-q01
   type: single_choice
   difficulty: beginner
-  learning_objective: Read an error from the status code
+  learning_objective: Check a wrapping token without using it
   source_readings:
-  - sections/section-010/module-01/course-01-requests-tokens-and-responses.md
-  prompt: A `curl` request to `/v1/secret/data/inventory/config` is sent without a
-    token. What does OpenBao answer?
+  - sections/section-010/module-01/course-03-response-wrapping-and-headers.md
+  prompt: A receiver wants to check where a wrapping token came from before using
+    it. Which request does that without using the token up?
   options:
   - id: a
-    text: Status `403` with an `errors` list that says `permission denied`.
-    explanation: Correct. A request without a token is treated like a request with
-      a token that has no rights.
+    text: A POST to `sys/wrapping/lookup` with the wrapping token in the body.
+    explanation: Correct. The lookup shows the creation path and TTL and does not
+      use the token.
   - id: b
-    text: Status `404` because the path is hidden from anonymous callers.
-    explanation: Not correct. `404` means nothing exists at the path.
+    text: A POST to `sys/wrapping/unwrap` with the wrapping token.
+    explanation: Not correct. Unwrapping uses the token and it works only once.
   - id: c
-    text: Status `200` with an empty `data` field.
-    explanation: Not correct. The request is refused, so there is no successful response.
+    text: A GET on `secret/metadata/inventory`.
+    explanation: Not correct. That reads the metadata of a secret and says nothing
+      about a wrapping token.
   - id: d
-    text: Status `503` because OpenBao is sealed.
-    explanation: Not correct. `503` means sealed or not ready. The server here is
-      unsealed.
+    text: A GET on `sys/health`.
+    explanation: Not correct. It reports the server state, not a wrapping token.
   correct_option: a
-  explanation: Correct. A request without a token is treated like a request with a
-    token that has no rights.
+  explanation: Correct. The lookup shows the creation path and TTL and does not use
+    the token.
 - id: ats116-final-q02
   type: single_choice
   difficulty: beginner
-  learning_objective: Find the token in a login response
+  learning_objective: Read the fields of a KV version 2 response
   source_readings:
-  - sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
-  prompt: You log in with userpass over HTTP. Where does the new token appear in the
+  - sections/section-010/module-01/course-01-requests-tokens-and-responses.md
+  prompt: You read a KV version 2 secret over HTTP. Where are your own fields in the
     response?
   options:
   - id: a
-    text: In `data.token`.
-    explanation: Not correct. For a login `data` is empty.
+    text: In `.data` only, next to nothing else.
+    explanation: Not correct. `.data` holds both `data` and `metadata`.
   - id: b
-    text: In `auth.client_token`.
-    explanation: Correct. A login fills `auth`, not `data`.
+    text: In `.data.metadata`.
+    explanation: Not correct. `metadata` holds the version and its times.
   - id: c
-    text: In `wrap_info.token`.
-    explanation: Not correct. `wrap_info` is filled only for a wrapped response.
+    text: In `.auth.client_token`.
+    explanation: Not correct. `auth` is filled only by a login.
   - id: d
-    text: In the `request_id` field.
-    explanation: Not correct. `request_id` identifies the request and is not a token.
-  correct_option: b
-  explanation: Correct. A login fills `auth`, not `data`.
+    text: In `.data.data`.
+    explanation: Correct. The outer `data` belongs to the API and the inner `data`
+      to the KV version 2 engine.
+  correct_option: d
+  explanation: Correct. The outer `data` belongs to the API and the inner `data` to
+    the KV version 2 engine.
 - id: ats116-final-q03
   type: single_choice
   difficulty: intermediate
-  learning_objective: React to a failed first unwrap
+  learning_objective: Use the KV version 2 paths
   source_readings:
-  - sections/section-010/module-01/course-03-response-wrapping-and-headers.md
-  prompt: The receiver unwraps a wrapping token for the first time and OpenBao says
-    the token is no longer valid. What must the sender do?
+  - sections/section-010/module-01/course-02-logging-in-reading-writing-listing.md
+  prompt: The CLI command `bao kv put secret/inventory/notes` writes a secret. Which
+    HTTP path does the same write?
   options:
   - id: a
-    text: Ask for a new wrapping token of the same secret and carry on.
-    explanation: Not correct. The secret was already read by someone else.
+    text: "`secret/inventory/notes`, with the fields at the top level of the body."
+    explanation: Not correct. That is the CLI short form and does not work over HTTP.
   - id: b
-    text: Retry the unwrap with a longer TTL.
-    explanation: Not correct. A used wrapping token cannot be opened again.
+    text: "`secret/metadata/inventory/notes`, with the fields in the body."
+    explanation: Not correct. The `metadata/` path holds the version history, not
+      the values.
   - id: c
-    text: Treat the secret as leaked and replace it.
-    explanation: Correct. Someone else unwrapped it first.
+    text: "`secret/data/inventory/notes`, with the fields at the top level of the
+      body."
+    explanation: 'Not correct. KV version 2 expects the fields inside `{"data": {...}}`.'
   - id: d
-    text: Do nothing, because wrapping tokens expire and renew themselves.
-    explanation: Not correct. A wrapping token works exactly once.
-  correct_option: c
-  explanation: Correct. Someone else unwrapped it first.
+    text: "`secret/data/inventory/notes`, with the fields inside a `data` object in
+      the body."
+    explanation: Correct. The CLI hides the `data/` part of the path.
+  correct_option: d
+  explanation: Correct. The CLI hides the `data/` part of the path.
 - id: ats116-final-q04
   type: single_choice
-  difficulty: intermediate
-  learning_objective: Follow a Kubernetes auth login
+  difficulty: beginner
+  learning_objective: Explain auto-auth
   source_readings:
   - sections/section-020/module-01/course-01-auto-auth-and-sinks.md
-  prompt: The agent sends its pod's service account token to OpenBao. How does OpenBao
-    check it?
+  prompt: What does auto-auth do in OpenBao Agent?
   options:
   - id: a
-    text: It compares the token with a password stored in the agent configuration.
-    explanation: Not correct. No password is involved.
+    text: It renders templates into files.
+    explanation: Not correct. That is the job of the `template` stanza.
   - id: b
-    text: It accepts any token that starts with the pod name.
-    explanation: Not correct. OpenBao validates the token with the Kubernetes API.
+    text: It logs the agent in and logs in again by itself when the token cannot be
+      renewed any more.
+    explanation: Correct. This is the agent's login loop.
   - id: c
-    text: It reads the token from the sink file.
-    explanation: Not correct. The sink is where the agent writes the OpenBao token,
-      not what OpenBao reads.
+    text: It copies the root token into the pod.
+    explanation: Not correct. Auto-auth uses an auth method and never needs a stored
+      token.
   - id: d
-    text: It asks the Kubernetes API with a TokenReview, then checks that the role
-      allows that service account and namespace.
-    explanation: Correct. The role turns the identity into an OpenBao token.
-  correct_option: d
-  explanation: Correct. The role turns the identity into an OpenBao token.
+    text: It starts the application as a child process.
+    explanation: Not correct. That is process supervisor mode with the `exec` stanza.
+  correct_option: b
+  explanation: Correct. This is the agent's login loop.
 - id: ats116-final-q05
   type: single_choice
   difficulty: intermediate
-  learning_objective: Know when the agent renders again
+  learning_objective: Find why a login fails
   source_readings:
-  - sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
-  prompt: The agent renders a KV version 2 secret. How long can a new version take
-    to reach the file if nothing is changed in `template_config`?
+  - sections/section-020/module-01/course-01-auto-auth-and-sinks.md
+  prompt: The agent logs in with the correct role name and gets `permission denied`.
+    What is the most likely cause?
   options:
   - id: a
-    text: Up to five minutes, because the default `static_secret_render_interval`
-      is five minutes.
-    explanation: Correct. KV version 2 secrets have no lease, so the agent reads them
-      again on a timer.
+    text: The sink file has the wrong permissions.
+    explanation: Not correct. The sink is written after a successful login.
   - id: b
-    text: It reaches the file at once, because the agent watches OpenBao for changes.
-    explanation: Not correct. The agent does not watch OpenBao.
+    text: The template uses `.Data.db_host`.
+    explanation: Not correct. A template error does not stop the login.
   - id: c
-    text: Up to one hour, which is the lifetime of the token.
-    explanation: Not correct. The token lifetime does not set the render timer.
+    text: The role binds another service account name or namespace than the pod uses.
+    explanation: Correct. A pod with another service account or namespace is refused
+      even with the right role name.
   - id: d
-    text: Never, until the pod restarts.
-    explanation: Not correct. The agent reads the secret again on its own.
-  correct_option: a
-  explanation: Correct. KV version 2 secrets have no lease, so the agent reads them
-    again on a timer.
+    text: The render interval is set to 15 seconds.
+    explanation: Not correct. The interval does not affect the login.
+  correct_option: c
+  explanation: Correct. A pod with another service account or namespace is refused
+    even with the right role name.
 - id: ats116-final-q06
   type: single_choice
   difficulty: intermediate
-  learning_objective: See what happens when a secret changes
+  learning_objective: Diagnose a `<no value>` line
   source_readings:
-  - sections/section-020/module-01/course-03-process-supervisor-mode.md
-  prompt: In process supervisor mode with `restart_on_secret_changes = "always"`,
-    a secret changes. What does the agent do?
+  - sections/section-020/module-01/course-02-rendering-secrets-with-templates.md
+  prompt: After a template change, the file contains `DB_HOST=<no value>` and the
+    agent log shows no error. What happened?
   options:
   - id: a
-    text: It changes the environment variables of the running child.
-    explanation: Not correct. Environment variables are read at start and cannot be
-      changed in a running process.
+    text: The agent could not log in.
+    explanation: Not correct. If the login failed, no template would run and the file
+      would be missing.
   - id: b
-    text: It sends the child process `SIGTERM`, waits for it to stop and starts it
-      again with the new variables.
-    explanation: Correct. The pod and the agent keep running. Only the child is replaced.
+    text: The template read `.Data.db_host`. The field is under `.Data.data`, and
+      nothing failed.
+    explanation: Correct. `error_on_missing_key = true` turns a missing field into
+      an error in the log.
   - id: c
-    text: It restarts the whole pod.
-    explanation: Not correct. Only the child process is replaced.
+    text: The `destination` points at a file nobody reads.
+    explanation: Not correct. The value is missing from the file that is rendered,
+      so the destination is not the cause.
   - id: d
-    text: It does nothing until the next pod restart.
-    explanation: Not correct. That is the behaviour of `restart_on_secret_changes
-      = "never"`.
+    text: The policy denies the secret path.
+    explanation: Not correct. A denied read gives an error in the agent log.
   correct_option: b
-  explanation: Correct. The pod and the agent keep running. Only the child is replaced.
+  explanation: Correct. `error_on_missing_key = true` turns a missing field into an
+    error in the log.
 - id: ats116-final-q07
   type: single_choice
-  difficulty: intermediate
-  learning_objective: Predict a request with a bad token
+  difficulty: beginner
+  learning_objective: Explain use_auto_auth_token
   source_readings:
   - sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
-  prompt: 'A program sends a request through the proxy with `X-Vault-Token: not-a-real-token`.
-    The proxy uses `use_auto_auth_token = true`. What happens?'
+  prompt: With `use_auto_auth_token = true` in the `api_proxy` stanza, when does the
+    proxy add its own token to a request?
   options:
   - id: a
-    text: The proxy replaces the token with its own and OpenBao answers `200`.
-    explanation: Not correct. Replacing a token happens only with `"force"`.
+    text: For every request, and it replaces any token in the request.
+    explanation: Not correct. That is the behaviour of the value `"force"`.
   - id: b
-    text: The proxy refuses the request itself with `405`.
-    explanation: Not correct. The proxy does not judge the token.
+    text: Never, because the proxy only forwards requests.
+    explanation: Not correct. Adding the token is the purpose of the setting.
   - id: c
-    text: The proxy forwards the token as it is and OpenBao answers `403`.
-    explanation: Correct. The caller's token is used, not the proxy's.
+    text: Only for requests to `sys/health`.
+    explanation: Not correct. The setting does not depend on the path.
   - id: d
-    text: The proxy logs in again and retries the request.
-    explanation: Not correct. A bad caller token does not start a new login.
-  correct_option: c
-  explanation: Correct. The caller's token is used, not the proxy's.
+    text: Only when the request arrives without a token.
+    explanation: Correct. A request that carries its own token keeps it.
+  correct_option: d
+  explanation: Correct. A request that carries its own token keeps it.
 - id: ats116-final-q08
   type: single_choice
-  difficulty: intermediate
-  learning_objective: Name the risk of a shared proxy
+  difficulty: beginner
+  learning_objective: Choose between Agent and Proxy
   source_readings:
-  - sections/section-030/module-01/course-02-proxy-as-a-sidecar.md
-  prompt: What is the main risk of running one shared proxy Deployment with its own
-    Service for many applications?
+  - sections/section-030/module-01/course-01-api-proxy-and-auto-auth-token.md
+  prompt: An application already calls the OpenBao HTTP API with a client library.
+    Which component fits?
   options:
   - id: a
-    text: The proxy cannot log in with a service account.
-    explanation: Not correct. It can log in with the service account of its own pod.
+    text: OpenBao Agent with templates only.
+    explanation: Not correct. Templates suit applications that read files.
   - id: b
-    text: The proxy cannot renew its token.
-    explanation: Not correct. Renewal does not depend on the deployment style.
+    text: OpenBao Proxy, which adds a token to its requests.
+    explanation: Correct. Agent templates suit programs that read files or environment
+      variables.
   - id: c
-    text: OpenBao refuses requests from a Service.
-    explanation: Not correct. OpenBao has no such rule.
+    text: Process supervisor mode with an `exec` stanza.
+    explanation: Not correct. That mode suits programs that read environment variables.
   - id: d
-    text: Every pod that can reach the Service acts with the proxy's identity and
-      policies.
-    explanation: Correct. The proxy adds its token to every request without one.
-  correct_option: d
-  explanation: Correct. The proxy adds its token to every request without one.
+    text: A static root token in the application's environment.
+    explanation: Not correct. Never give an application a long-lived token.
+  correct_option: b
+  explanation: Correct. Agent templates suit programs that read files or environment
+    variables.
 - id: ats116-final-q09
   type: single_choice
   difficulty: intermediate
-  learning_objective: Know what a stopped proxy does
+  learning_objective: Bind a role narrowly
   source_readings:
-  - sections/section-030/module-01/course-03-caching-tokens-and-leases.md
-  prompt: The proxy stops. What happens to the tokens and leases it cached?
+  - sections/section-030/module-01/course-02-proxy-as-a-sidecar.md
+  prompt: How should the Kubernetes auth role for a proxy sidecar bind service accounts?
   options:
   - id: a
-    text: The proxy forgets them and stops renewing them. They are not revoked and
-      expire on their own schedule.
-    explanation: Correct. A `persist` block can restore the cache after a restart.
+    text: To `*` service accounts in one namespace.
+    explanation: Not correct. Any pod in that namespace could then use the role.
   - id: b
-    text: OpenBao revokes all of them at once.
-    explanation: Not correct. Stopping the proxy does not revoke anything.
+    text: To the `default` service account of every namespace.
+    explanation: Not correct. Many pods share that account and it is not specific
+      to the application.
   - id: c
-    text: They stay valid forever.
-    explanation: Not correct. Without renewal they expire at their TTL.
+    text: To no service account, because the proxy uses a static token.
+    explanation: Not correct. A static token is exactly what the sidecar replaces.
   - id: d
-    text: The proxy writes them to a sink first.
-    explanation: Not correct. A sink is for the auto-auth token, not for the cache.
-  correct_option: a
-  explanation: Correct. A `persist` block can restore the cache after a restart.
+    text: To exactly one service account in exactly one namespace.
+    explanation: Correct. A `*` in either field lets any pod log in as this application.
+  correct_option: d
+  explanation: Correct. A `*` in either field lets any pod log in as this application.
 - id: ats116-final-q10
   type: single_choice
   difficulty: beginner
-  learning_objective: Know where secrets are written
+  learning_objective: Know the annotation prefix
   source_readings:
   - sections/section-040/module-01/course-01-how-the-injector-works.md
-  prompt: In which directory do injected secrets appear inside the pod?
+  prompt: Which annotation prefix does the injector installed by the chart read?
   options:
   - id: a
-    text: "`/openbao/secrets`"
-    explanation: Not correct. With this injector the directory is `/vault/secrets`.
+    text: "`openbao.openbao.com/`"
+    explanation: Not correct. No released injector uses this prefix, and such annotations
+      are ignored silently.
   - id: b
-    text: "`/vault/secrets`"
-    explanation: Correct. It is a shared in-memory volume mounted in every container.
+    text: "`openbao.org/`"
+    explanation: Not correct. The injector does not read this prefix.
   - id: c
-    text: "`/etc/secrets`"
-    explanation: Not correct. The injector does not use this directory.
+    text: "`vault.hashicorp.com/`"
+    explanation: Correct. The injector keeps the Vault names, so annotations such
+      as `vault.hashicorp.com/agent-inject` are used.
   - id: d
-    text: "`/var/run/secrets/kubernetes.io/serviceaccount`"
-    explanation: Not correct. That directory holds the service account token.
-  correct_option: b
-  explanation: Correct. It is a shared in-memory volume mounted in every container.
+    text: "`bao.io/`"
+    explanation: Not correct. The injector does not read this prefix.
+  correct_option: c
+  explanation: Correct. The injector keeps the Vault names, so annotations such as
+    `vault.hashicorp.com/agent-inject` are used.
 - id: ats116-final-q11
   type: single_choice
   difficulty: intermediate
-  learning_objective: Match secret and template names
+  learning_objective: Understand failurePolicy Ignore
   source_readings:
-  - sections/section-040/module-01/course-02-annotations-and-templates.md
-  prompt: The annotations `agent-inject-secret-config.env` and `agent-inject-template-db.env`
-    are both set. What is the result?
+  - sections/section-040/module-01/course-01-how-the-injector-works.md
+  prompt: 'The webhook has `failurePolicy: Ignore` and the injector is down when a
+    pod is created. What happens?'
   options:
   - id: a
-    text: The file `config.env` is rendered with the template `db.env`.
-    explanation: Not correct. The names must match.
+    text: Kubernetes creates the pod unchanged, without an agent, and nothing reports
+      it.
+    explanation: Correct. Delete the pod after the injector runs again so it is injected.
   - id: b
-    text: The injector refuses the pod.
-    explanation: Not correct. It injects the pod and uses the default format.
+    text: Kubernetes refuses to create the pod.
+    explanation: Not correct. That would be the behaviour of `Fail`.
   - id: c
-    text: The template does not apply to the file `config.env`, so that file gets
-      the default format.
-    explanation: Correct. A template applies to the secret with the same name.
+    text: Kubernetes waits until the injector is back.
+    explanation: Not correct. The pod is created at once.
   - id: d
-    text: The file is named `db.env`.
-    explanation: Not correct. The file name comes from the secret annotation.
-  correct_option: c
-  explanation: Correct. A template applies to the secret with the same name.
+    text: The pod is injected later, when the injector starts.
+    explanation: Not correct. The injector changes pods only when they are created.
+  correct_option: a
+  explanation: Correct. Delete the pod after the injector runs again so it is injected.
 - id: ats116-final-q12
   type: single_choice
   difficulty: intermediate
-  learning_objective: Debug a stuck init container
+  learning_objective: Know pre-populate-only
   source_readings:
-  - sections/section-040/module-01/course-03-troubleshooting-injection.md
-  prompt: An injected pod stays in `Init:0/1`. Which log do you read first?
+  - sections/section-040/module-01/course-02-annotations-and-templates.md
+  prompt: 'What does `vault.hashicorp.com/agent-pre-populate-only: "true"` do?'
   options:
   - id: a
-    text: The log of the `app` container.
-    explanation: Not correct. The application has not started yet.
+    text: It injects only the init container, so the file is written once at start
+      and no sidecar keeps it up to date.
+    explanation: Correct. The file keeps its value until the pod is replaced.
   - id: b
-    text: The log of the Kubernetes scheduler.
-    explanation: Not correct. `Init:0/1` almost always means the agent cannot log
-      in or read the secret.
+    text: It injects only the sidecar and skips the init container.
+    explanation: Not correct. The init container is the part that remains.
   - id: c
-    text: The log of the `tester` pod.
-    explanation: Not correct. That pod is a client and is not part of the injected
-      pod.
+    text: It makes the file read-only for the application.
+    explanation: Not correct. File permissions are set with `agent-inject-perms-<name>`.
   - id: d
-    text: The log of the `vault-agent-init` container.
-    explanation: Correct. It shows whether the login or the render failed, for example
-      with `permission denied`.
-  correct_option: d
-  explanation: Correct. It shows whether the login or the render failed, for example
-    with `permission denied`.
+    text: It turns off the injection.
+    explanation: Not correct. The init container is still injected.
+  correct_option: a
+  explanation: Correct. The file keeps its value until the pod is replaced.
+- id: ats116-final-q13
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read the limits of a token
+  source_readings:
+  - sections/section-010/module-02/course-01-the-token-lifecycle.md
+  prompt: Which request shows how many uses a token has left?
+  options:
+  - id: a
+    text: A GET on `auth/token/lookup-self` with the token in the header.
+    explanation: Correct. The lookup shows the policies, the time left and the uses
+      left of the token.
+  - id: b
+    text: A GET on `sys/health`.
+    explanation: It reports the server state and says nothing about a token.
+  - id: c
+    text: A POST to `sys/capabilities-self`.
+    explanation: It reports what the token may do on a path, not how many uses are
+      left.
+  - id: d
+    text: A POST to `auth/token/renew-self`.
+    explanation: It extends the token and does not show its limits.
+  correct_option: a
+  explanation: Correct. The lookup shows the policies, the time left and the uses
+    left of the token.
+- id: ats116-final-q14
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Tell the token types apart
+  source_readings:
+  - sections/section-010/module-02/course-01-the-token-lifecycle.md
+  prompt: A script must renew a token every few minutes. Why does a batch token not
+    fit?
+  options:
+  - id: a
+    text: A batch token has no policies.
+    explanation: Not correct. A batch token carries policies like other tokens.
+  - id: b
+    text: A batch token works only on `sys/health`.
+    explanation: Not correct. It works on any path its policies allow.
+  - id: c
+    text: A batch token cannot be renewed.
+    explanation: Correct. Batch tokens are cheap and fixed in lifetime and cannot
+      be renewed.
+  - id: d
+    text: A batch token can be used only once.
+    explanation: Not correct. The use limit is set separately.
+  correct_option: c
+  explanation: Correct. Batch tokens are cheap and fixed in lifetime and cannot be
+    renewed.
+- id: ats116-final-q15
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read the status codes of sys/health
+  source_readings:
+  - sections/section-010/module-02/course-03-server-state-health-and-error-codes.md
+  prompt: A load balancer calls `sys/health` and gets `503`. What does that mean?
+  options:
+  - id: a
+    text: The server is a standby node.
+    explanation: Not correct. A standby answers `429`.
+  - id: b
+    text: The server is sealed.
+    explanation: Correct. `sys/health` answers `200` active, `429` standby, `501`
+      uninitialized and `503` sealed.
+  - id: c
+    text: The server is not initialized.
+    explanation: Not correct. That answers `501`.
+  - id: d
+    text: The token is missing.
+    explanation: Not correct. The health endpoint needs no token.
+  correct_option: b
+  explanation: Correct. `sys/health` answers `200` active, `429` standby, `501` uninitialized
+    and `503` sealed.
+- id: ats116-final-q16
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Tell the role ID and the secret ID apart
+  source_readings:
+  - sections/section-020/module-02/course-01-approle-roles-and-secret-ids.md
+  prompt: Which of the two AppRole values is secret?
+  options:
+  - id: a
+    text: The secret ID. The role ID names the role and is not secret.
+    explanation: Correct. The secret ID works as the password of the login.
+  - id: b
+    text: The role ID.
+    explanation: Not correct. It names the role.
+  - id: c
+    text: Both are secret in the same way.
+    explanation: Not correct. The role ID alone cannot log in.
+  - id: d
+    text: Neither, the accessor is the credential.
+    explanation: Not correct. An accessor only refers to a secret ID.
+  correct_option: a
+  explanation: Correct. The secret ID works as the password of the login.
+- id: ats116-final-q17
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Check a wrapping token
+  source_readings:
+  - sections/section-020/module-02/course-02-delivering-a-secret-id-wrapped.md
+  prompt: A receiver wants to check a wrapped secret ID before the agent uses it.
+    What should it call?
+  options:
+  - id: a
+    text: "`sys/wrapping/unwrap`"
+    explanation: Not correct. Unwrapping uses the single-use token.
+  - id: b
+    text: "`auth/approle/login`"
+    explanation: Not correct. That would log in with the wrong value.
+  - id: c
+    text: "`sys/wrapping/lookup` with the wrapping token."
+    explanation: Correct. The lookup does not use the token up.
+  - id: d
+    text: "`sys/health`"
+    explanation: Not correct. It says nothing about a wrapping token.
+  correct_option: c
+  explanation: Correct. The lookup does not use the token up.
+- id: ats116-final-q18
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose an auto-auth method
+  source_readings:
+  - sections/section-020/module-02/course-03-other-auto-auth-methods.md
+  prompt: A pod has a Kubernetes service account. Which auto-auth method fits without
+    adding a new secret?
+  options:
+  - id: a
+    text: "`approle`, because it is the only method that works in a pod."
+    explanation: Not correct. It needs a delivered secret ID.
+  - id: b
+    text: "`kubernetes`"
+    explanation: Correct. Choose the method the workload already has a proof of identity
+      for.
+  - id: c
+    text: "`token_file` with the root token."
+    explanation: Not correct. That puts a powerful token in the pod.
+  - id: d
+    text: "`cert`, because pods have certificates by default."
+    explanation: Not correct. A pod has a service account token, not a client certificate.
+  correct_option: b
+  explanation: Correct. Choose the method the workload already has a proof of identity
+    for.
+- id: ats116-final-q19
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read and list secrets in a template
+  source_readings:
+  - sections/section-020/module-03/course-01-the-template-language.md
+  prompt: Which template function reads a secret, and which one lists the keys under
+    a path?
+  options:
+  - id: a
+    text: "`secret` reads a path and `secrets` lists a path."
+    explanation: Correct. Reading and listing are separate functions.
+  - id: b
+    text: "`secrets` reads and `secret` lists."
+    explanation: Not correct. The names are the other way around.
+  - id: c
+    text: Both only read.
+    explanation: Not correct. `secrets` lists keys.
+  - id: d
+    text: "`file` reads the secret."
+    explanation: Not correct. `file` reads a local file.
+  correct_option: a
+  explanation: Correct. Reading and listing are separate functions.
+- id: ats116-final-q20
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Control whitespace
+  source_readings:
+  - sections/section-020/module-03/course-01-the-template-language.md
+  prompt: What does `{{-` do in a template?
+  options:
+  - id: a
+    text: It comments the action out.
+    explanation: Not correct. Comments use a different form.
+  - id: b
+    text: It reads the secret as KV version 1.
+    explanation: Not correct. It does not change the read.
+  - id: c
+    text: It removes the whitespace before the action.
+    explanation: Correct. `{{-` and `-}}` control white space around an action.
+  - id: d
+    text: It stops the agent.
+    explanation: Not correct. It only trims white space.
+  correct_option: c
+  explanation: Correct. `{{-` and `-}}` control white space around an action.
+- id: ats116-final-q21
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know the render schedule for leased secrets
+  source_readings:
+  - sections/section-020/module-03/course-03-when-the-agent-renders-again.md
+  prompt: When does the agent render a template again for a leased secret?
+  options:
+  - id: a
+    text: Only when the pod restarts.
+    explanation: Not correct. The file changes without a restart.
+  - id: b
+    text: Before the lease runs out.
+    explanation: Correct. Leased secrets follow the lease. Static secrets follow the
+      interval.
+  - id: c
+    text: Every second.
+    explanation: Not correct. That is not how leases work.
+  - id: d
+    text: Only when the template file changes.
+    explanation: Not correct. A new lease causes a render.
+  correct_option: b
+  explanation: Correct. Leased secrets follow the lease. Static secrets follow the
+    interval.
+- id: ats116-final-q22
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose a listener address
+  source_readings:
+  - sections/section-030/module-02/course-01-listeners-and-who-can-reach-the-proxy.md
+  prompt: A proxy `tcp` listener is on `127.0.0.1:8100` in a sidecar. Who can reach
+    it?
+  options:
+  - id: a
+    text: Only containers in the same pod.
+    explanation: Correct. Loopback is shared by the containers of one pod and nobody
+      else.
+  - id: b
+    text: Every pod in the cluster.
+    explanation: Not correct. That needs a listener on `0.0.0.0` and a Service.
+  - id: c
+    text: Only the node.
+    explanation: Not correct. The node does not share the pod's loopback.
+  - id: d
+    text: Nobody, loopback is closed.
+    explanation: Not correct. The application in the pod can use it.
+  correct_option: a
+  explanation: Correct. Loopback is shared by the containers of one pod and nobody
+    else.
+- id: ats116-final-q23
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Trust OpenBao with a CA
+  source_readings:
+  - sections/section-030/module-02/course-02-the-vault-stanza-and-tls-to-openbao.md
+  prompt: How should the proxy trust the OpenBao server certificate?
+  options:
+  - id: a
+    text: With `tls_skip_verify = true`.
+    explanation: Not correct. That trusts any server.
+  - id: b
+    text: By turning off the listener.
+    explanation: Not correct. The listener is a different setting.
+  - id: c
+    text: With `ca_cert` or `ca_path` in the `vault` stanza.
+    explanation: Correct. This keeps verification on. `tls_skip_verify` should not
+      leave a test.
+  - id: d
+    text: By using plain HTTP.
+    explanation: Not correct. That sends tokens unencrypted.
+  correct_option: c
+  explanation: Correct. This keeps verification on. `tls_skip_verify` should not leave
+    a test.
+- id: ats116-final-q24
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Make the proxy replace tokens
+  source_readings:
+  - sections/section-030/module-02/course-03-whose-token-the-proxy-sends.md
+  prompt: Which setting makes the proxy's identity the only one OpenBao sees?
+  options:
+  - id: a
+    text: "`use_auto_auth_token = true`"
+    explanation: Not correct. It keeps a token the request already has.
+  - id: b
+    text: '`use_auto_auth_token = "force"`, a string.'
+    explanation: Correct. The proxy replaces any token on the request.
+  - id: c
+    text: "`use_auto_auth_token = false`"
+    explanation: Not correct. It never adds the proxy's token.
+  - id: d
+    text: "`require_request_header = true`"
+    explanation: Not correct. It checks a header only.
+  correct_option: b
+  explanation: Correct. The proxy replaces any token on the request.
+- id: ats116-final-q25
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name a secret with an annotation
+  source_readings:
+  - sections/section-040/module-02/course-01-several-secrets-several-files.md
+  prompt: In `vault.hashicorp.com/agent-inject-secret-api`, what is `api`?
+  options:
+  - id: a
+    text: The unique name of one secret. Every annotation with that name shapes that
+      secret.
+    explanation: Correct. The same name must be used in all the annotations of that
+      secret.
+  - id: b
+    text: The name of the pod.
+    explanation: Not correct. The pod name is not part of the annotation.
+  - id: c
+    text: The OpenBao mount.
+    explanation: Not correct. The mount is in the path value.
+  - id: d
+    text: The name of the role.
+    explanation: Not correct. The role has its own annotation.
+  correct_option: a
+  explanation: Correct. The same name must be used in all the annotations of that
+    secret.
+- id: ats116-final-q26
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Write a template annotation
+  source_readings:
+  - sections/section-040/module-02/course-02-shaping-the-files.md
+  prompt: Which annotation writes a template for one secret?
+  options:
+  - id: a
+    text: "`agent-inject-secret-<name>`"
+    explanation: Not correct. It sets the path.
+  - id: b
+    text: "`agent-inject-token`"
+    explanation: Not correct. It writes the token to a file.
+  - id: c
+    text: "`agent-inject-template-<name>`"
+    explanation: Correct. The value is the template text.
+  - id: d
+    text: "`agent-limits-cpu`"
+    explanation: Not correct. It limits CPU.
+  correct_option: c
+  explanation: Correct. The value is the template text.
+- id: ats116-final-q27
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Apply an annotation change
+  source_readings:
+  - sections/section-040/module-02/course-03-tuning-the-agent-containers.md
+  prompt: An annotation is changed on a running Deployment's pod. When does the pod
+    see the change?
+  options:
+  - id: a
+    text: At once, the sidecar reloads.
+    explanation: Not correct. The injector does not touch running pods.
+  - id: b
+    text: Only when the pod is replaced, because annotations reach new pods.
+    explanation: Correct. The injector acts when a pod is created.
+  - id: c
+    text: After the next render interval.
+    explanation: Not correct. The render interval does not read annotations.
+  - id: d
+    text: Never, annotations are ignored.
+    explanation: Not correct. New pods use them.
+  correct_option: b
+  explanation: Correct. The injector acts when a pod is created.

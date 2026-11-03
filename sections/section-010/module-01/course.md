@@ -4,7 +4,7 @@ OpenBao answers every client through one HTTP API. The `bao` command-line tool i
 
 This module is about those requests. Keep one sentence in mind: **every request names a path under `/v1/`, carries a token in the `X-Vault-Token` header, and gets back JSON with either `data` or an `errors` list.** The API path is the same path the policies talk about, so reading a request also tells you which policy rule it needs.
 
-The module has three parts. **Requests, Tokens And Responses** sends unauthenticated and authenticated requests and takes a response and an error apart. **Logging In, Reading, Writing And Listing** logs in with userpass and AppRole and works with KV version 2 secrets, where the paths gain `data/` and `metadata/`. **Response Wrapping And Request Headers** hands a secret to someone else as a single-use wrapping token. A graded lab follows the third part.
+The module has four parts. **Requests, Tokens And Responses** sends unauthenticated and authenticated requests and takes a response and an error apart. **Logging In, Reading, Writing And Listing** logs in with userpass and AppRole and works with KV version 2 secrets, where the paths gain `data/` and `metadata/`. **Response Wrapping And Request Headers** hands a secret to someone else as a single-use wrapping token. A graded lab follows the third part. **KV Version 2 Versions, Deletes And Check-And-Set** closes the module with the history of a secret and safe concurrent writes.
 
 ## Learning objectives
 
@@ -15,6 +15,7 @@ After this module you can:
 - Log in over HTTP with userpass and AppRole, and use the token from `auth.client_token`.
 - Write, read and list KV version 2 secrets with the right `data/` and `metadata/` paths.
 - Use the `LIST` method or `?list=true` to list keys.
+- Read old versions, tell delete from destroy, and write with check-and-set.
 - Request a wrapped response with `X-Vault-Wrap-TTL`, and look up and unwrap a wrapping token.
 
 ## Before you start

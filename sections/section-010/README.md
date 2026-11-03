@@ -10,6 +10,9 @@ This section teaches that API directly. It comes first because every later secti
 - The shape of a response: `data`, `auth`, `lease_duration`, `wrap_info`, `warnings`, and the `errors` list with its status code.
 - Logging in over HTTP with userpass and AppRole, and using the token you get back.
 - Reading, writing and listing KV version 2 secrets, and why their paths contain `data/` and `metadata/`.
+- KV version 2 versions, the three kinds of delete and check-and-set writes.
+- Reading, renewing, creating and revoking tokens, and finding out what a token may do.
+- Reading server state and error codes, and the request behind each `bao` command.
 - Asking OpenBao to wrap a response, and looking up or unwrapping a wrapping token.
 
 ## The learning path
@@ -21,7 +24,16 @@ The module starts at its landing page, which also launches the playground. The p
 1. Requests, Tokens And Responses
 2. Logging In, Reading, Writing And Listing
 3. Response Wrapping And Request Headers, followed by the lab **Hand Over A Secret With A Wrapped Response**
-4. Summary
+4. KV Version 2 Versions, Deletes And Check-And-Set
+5. Summary
+
+### 2. Tokens, Permissions And Server State Over HTTP
+
+1. The Token Lifecycle, followed by the lab **Issue A Limited Token For A Reporting Job**
+2. Finding Out What A Token Can Do
+3. Server State, Health And Error Codes
+4. The bao Command As An HTTP Client
+5. Summary
 
 ## Section capstone: Repair A Script That Calls The OpenBao API
 

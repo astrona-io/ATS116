@@ -101,8 +101,54 @@ modules:
           - name: "KV version 2 secrets engine"
             url: https://openbao.org/docs/secrets/kv/kv-v2/
       - type: reading
+        title: "KV Versions, Deletes And Check-And-Set"
+        path: sections/section-010/module-01/course-04-kv-versions-deletes-and-check-and-set.md
+      - type: reading
         title: Summary
-        path: sections/section-010/module-01/course-04-summary.md
+        path: sections/section-010/module-01/course-05-summary.md
+
+      - type: reading
+        title: "Tokens, Permissions And Server State Over HTTP"
+        path: sections/section-010/module-02/course.md
+      - type: reading
+        title: "The Token Lifecycle"
+        path: sections/section-010/module-02/course-01-the-token-lifecycle.md
+      - type: reading
+        title: Question
+        path: sections/section-010/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Issue A Limited Token For A Reporting Job Lab"
+        path: sections/section-010/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: http-api
+        task_kind: build
+        tags: [http-api, tokens, token-ttl, use-limit, policy, kubernetes-secret]
+        learning_goals:
+          - Create a token with a named policy, a fixed TTL and a use limit over HTTP
+          - Keep the token unused so every use is left for the job
+          - Store the token in a Kubernetes Secret and check its limits with the root token
+        resources:
+          - name: "Token auth method API"
+            url: https://openbao.org/docs/api-docs/auth/token/
+          - name: "Tokens"
+            url: https://openbao.org/docs/concepts/tokens/
+      - type: reading
+        title: "Finding Out What A Token Can Do"
+        path: sections/section-010/module-02/course-02-finding-out-what-a-token-can-do.md
+      - type: reading
+        title: "Server State, Health And Error Codes"
+        path: sections/section-010/module-02/course-03-server-state-health-and-error-codes.md
+      - type: reading
+        title: "The bao Command As An HTTP Client"
+        path: sections/section-010/module-02/course-04-the-bao-command-as-an-http-client.md
+      - type: reading
+        title: "Summary"
+        path: sections/section-010/module-02/course-05-summary.md
+      - type: quiz
+        title: "Knowledge Check: Tokens, Permissions And Server State"
+        path: sections/section-010/module-02/quiz.yaml
+        pass_score: 70
 
       - type: reading
         title: Question
@@ -178,8 +224,99 @@ modules:
         title: "Secrets As Environment Variables With Process Supervisor Mode"
         path: sections/section-020/module-01/course-03-process-supervisor-mode.md
       - type: reading
+        title: "Agent Configuration And Troubleshooting"
+        path: sections/section-020/module-01/course-04-agent-configuration-and-troubleshooting.md
+      - type: reading
         title: Summary
-        path: sections/section-020/module-01/course-04-summary.md
+        path: sections/section-020/module-01/course-05-summary.md
+
+      - type: reading
+        title: "Auto-Auth Methods, Secret IDs And Sinks"
+        path: sections/section-020/module-02/course.md
+      - type: reading
+        title: "AppRole Roles And Secret IDs"
+        path: sections/section-020/module-02/course-01-approle-roles-and-secret-ids.md
+      - type: reading
+        title: "Delivering A Secret ID Wrapped"
+        path: sections/section-020/module-02/course-02-delivering-a-secret-id-wrapped.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Hand An Agent A Wrapped Secret ID Lab"
+        path: sections/section-020/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: agent
+        task_kind: build
+        tags: [auto-auth, approle, secret-id, response-wrapping, agent]
+        learning_goals:
+          - Create an AppRole role with one policy, a token TTL and a single-use secret ID that expires
+          - Wrap a new secret ID with a short wrapping TTL instead of storing it in clear text
+          - Hand the role ID and the unused wrapping token over in a Kubernetes Secret
+        resources:
+          - name: "Auto-auth approle method"
+            url: https://openbao.org/docs/agent-and-proxy/autoauth/methods/approle/
+          - name: "AppRole auth method"
+            url: https://openbao.org/docs/auth/approle/
+          - name: "Response wrapping"
+            url: https://openbao.org/docs/concepts/response-wrapping/
+      - type: reading
+        title: "Other Auto-Auth Methods"
+        path: sections/section-020/module-02/course-03-other-auto-auth-methods.md
+      - type: reading
+        title: "Sink Options And Token Sharing"
+        path: sections/section-020/module-02/course-04-sink-options-and-token-sharing.md
+      - type: reading
+        title: "Summary"
+        path: sections/section-020/module-02/course-05-summary.md
+      - type: quiz
+        title: "Knowledge Check: Auto-Auth Methods, Secret IDs And Sinks"
+        path: sections/section-020/module-02/quiz.yaml
+        pass_score: 70
+
+      - type: reading
+        title: "Templates In Depth: Language, Options And Schedule"
+        path: sections/section-020/module-03/course.md
+      - type: reading
+        title: "The Template Language"
+        path: sections/section-020/module-03/course-01-the-template-language.md
+      - type: reading
+        title: "Template Options"
+        path: sections/section-020/module-03/course-02-template-options.md
+      - type: reading
+        title: "When The Agent Renders Again"
+        path: sections/section-020/module-03/course-03-when-the-agent-renders-again.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-03/labs/lab-01/question.md
+      - type: lab
+        title: "Render A JSON File With An Agent Template Lab"
+        path: sections/section-020/module-03/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 30m
+        topic: templates
+        task_kind: build
+        tags: [agent-template, template-config, toJSON, kv-v2, re-render]
+        learning_goals:
+          - Add a template that renders a KV version 2 secret as valid JSON with a numeric version field
+          - Make a missing or misspelled field fail the render instead of writing an empty value
+          - Keep the env file working and show a new secret version reaches both files without a pod restart
+        resources:
+          - name: "OpenBao Agent templates"
+            url: https://openbao.org/docs/agent-and-proxy/agent/template/
+          - name: "OpenBao Agent"
+            url: https://openbao.org/docs/agent-and-proxy/agent/
+      - type: reading
+        title: "Certificates And Dynamic Secrets"
+        path: sections/section-020/module-03/course-04-certificates-and-dynamic-secrets.md
+      - type: reading
+        title: "Summary"
+        path: sections/section-020/module-03/course-05-summary.md
+      - type: quiz
+        title: "Knowledge Check: Templates In Depth"
+        path: sections/section-020/module-03/quiz.yaml
+        pass_score: 70
 
       - type: reading
         title: Question
@@ -252,8 +389,54 @@ modules:
         title: "Caching Tokens And Leases"
         path: sections/section-030/module-01/course-03-caching-tokens-and-leases.md
       - type: reading
+        title: "Choosing Between The Proxy And The Agent"
+        path: sections/section-030/module-01/course-04-choosing-between-proxy-and-agent.md
+      - type: reading
         title: Summary
-        path: sections/section-030/module-01/course-04-summary.md
+        path: sections/section-030/module-01/course-05-summary.md
+
+      - type: reading
+        title: "Listeners, TLS And Token Control In OpenBao Proxy"
+        path: sections/section-030/module-02/course.md
+      - type: reading
+        title: "Listeners And Who Can Reach The Proxy"
+        path: sections/section-030/module-02/course-01-listeners-and-who-can-reach-the-proxy.md
+      - type: reading
+        title: "The vault Stanza And TLS To OpenBao"
+        path: sections/section-030/module-02/course-02-the-vault-stanza-and-tls-to-openbao.md
+      - type: reading
+        title: "Whose Token The Proxy Sends"
+        path: sections/section-030/module-02/course-03-whose-token-the-proxy-sends.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Make The Proxy Use Its Own Token Lab"
+        path: sections/section-030/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 30m
+        topic: proxy
+        task_kind: troubleshooting
+        tags: [bao-proxy, use_auto_auth_token, listener, token-control, policy]
+        learning_goals:
+          - Find why a request that carries an invalid token is refused although the proxy has a valid one
+          - Set use_auto_auth_token so the proxy always replaces the token on the request
+          - Keep the proxy listener reachable only from inside its pod and keep the application unchanged
+        resources:
+          - name: "OpenBao Proxy"
+            url: https://openbao.org/docs/agent-and-proxy/proxy/
+          - name: "OpenBao Proxy API proxy"
+            url: https://openbao.org/docs/agent-and-proxy/proxy/apiproxy/
+      - type: reading
+        title: "Logs And Troubleshooting"
+        path: sections/section-030/module-02/course-04-logs-and-troubleshooting.md
+      - type: reading
+        title: "Summary"
+        path: sections/section-030/module-02/course-05-summary.md
+      - type: quiz
+        title: "Knowledge Check: Listeners, TLS And Token Control"
+        path: sections/section-030/module-02/quiz.yaml
+        pass_score: 70
 
       - type: reading
         title: Question
@@ -329,8 +512,54 @@ modules:
         title: "Troubleshooting Injection"
         path: sections/section-040/module-01/course-03-troubleshooting-injection.md
       - type: reading
+        title: "Operating The Injector"
+        path: sections/section-040/module-01/course-04-operating-the-injector.md
+      - type: reading
         title: Summary
-        path: sections/section-040/module-01/course-04-summary.md
+        path: sections/section-040/module-01/course-05-summary.md
+
+      - type: reading
+        title: "Annotations In Depth"
+        path: sections/section-040/module-02/course.md
+      - type: reading
+        title: "Several Secrets, Several Files"
+        path: sections/section-040/module-02/course-01-several-secrets-several-files.md
+      - type: reading
+        title: "Shaping The Files"
+        path: sections/section-040/module-02/course-02-shaping-the-files.md
+      - type: reading
+        title: Question
+        path: sections/section-040/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Inject A Second Secret As A JSON File Lab"
+        path: sections/section-040/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 30m
+        topic: injector
+        task_kind: build
+        tags: [agent-injector, annotations, agent-inject-template, agent-inject-file, kv-v2]
+        learning_goals:
+          - Add annotations that inject a second secret into its own file name
+          - Render the second secret as valid JSON with a template annotation and a numeric version field
+          - Keep the first secret working and show a new version reaches the file without replacing the pod
+        resources:
+          - name: "Agent injector annotations"
+            url: https://openbao.org/docs/platform/k8s/injector/annotations/
+          - name: "Agent injector"
+            url: https://openbao.org/docs/platform/k8s/injector/
+      - type: reading
+        title: "Tuning The Agent Containers"
+        path: sections/section-040/module-02/course-03-tuning-the-agent-containers.md
+      - type: reading
+        title: "Roles, Auth Paths And Connections"
+        path: sections/section-040/module-02/course-04-roles-auth-paths-and-connections.md
+      - type: reading
+        title: "Summary"
+        path: sections/section-040/module-02/course-05-summary.md
+      - type: quiz
+        title: "Knowledge Check: Annotations In Depth"
+        path: sections/section-040/module-02/quiz.yaml
+        pass_score: 70
 
       - type: reading
         title: Question

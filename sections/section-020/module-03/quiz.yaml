@@ -1,0 +1,236 @@
+# Knowledge check for module module-03 of section 020. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats116-020-m03
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: module-03
+  title: "Templates In Depth: Language, Options And Schedule"
+placement:
+  position: after
+  reading: sections/section-020/module-03/course-05-summary.md
+questions:
+- id: ats116-020-m03-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Read and list secrets in a template"
+  source_readings:
+  - sections/section-020/module-03/course-01-the-template-language.md
+  prompt: "Which template function reads a secret, and which one lists the keys under a path?"
+  options:
+  - id: a
+    text: "`secret` reads a path and `secrets` lists a path."
+    explanation: "Correct. Reading and listing are separate functions."
+  - id: b
+    text: "`secrets` reads and `secret` lists."
+    explanation: "Not correct. The names are the other way around."
+  - id: c
+    text: "Both only read."
+    explanation: "Not correct. `secrets` lists keys."
+  - id: d
+    text: "`file` reads the secret."
+    explanation: "Not correct. `file` reads a local file."
+  correct_option: a
+  explanation: "Correct. Reading and listing are separate functions."
+- id: ats116-020-m03-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Read fields of a KV version 2 secret"
+  source_readings:
+  - sections/section-020/module-03/course-01-the-template-language.md
+  prompt: "A KV version 2 secret has a field `username`. How does a template reach it after `{{ with secret \"secret/data/inventory/config\" }}`?"
+  options:
+  - id: a
+    text: "`.Data.username`"
+    explanation: "Not correct. That is the KV version 1 form."
+  - id: b
+    text: "`.Data.metadata.username`"
+    explanation: "Not correct. Metadata holds version facts, not the fields."
+  - id: c
+    text: "`.Data.data.username`"
+    explanation: "Correct. KV version 2 puts the fields under `.Data.data` and the version under `.Data.metadata.version`."
+  - id: d
+    text: "`.username`"
+    explanation: "Not correct. The fields sit under `.Data.data`."
+  correct_option: c
+  explanation: "Correct. KV version 2 puts the fields under `.Data.data` and the version under `.Data.metadata.version`."
+- id: ats116-020-m03-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Find why a field renders empty"
+  source_readings:
+  - sections/section-020/module-03/course-01-the-template-language.md
+  prompt: "A rendered file contains `<no value>`. What is the usual cause?"
+  options:
+  - id: a
+    text: "The secret has no policy."
+    explanation: "Not correct. A policy problem causes a login or read error."
+  - id: b
+    text: "A field name is misspelled and `error_on_missing_key` is off."
+    explanation: "Correct. Without that option the template writes the placeholder instead of failing."
+  - id: c
+    text: "The sink mode is wrong."
+    explanation: "Not correct. That affects who can read the file."
+  - id: d
+    text: "The agent is out of memory."
+    explanation: "Not correct. A missing field gives the placeholder."
+  correct_option: b
+  explanation: "Correct. Without that option the template writes the placeholder instead of failing."
+- id: ats116-020-m03-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Render JSON"
+  source_readings:
+  - sections/section-020/module-03/course-01-the-template-language.md
+  prompt: "Which helper turns a map such as the secret data into JSON?"
+  options:
+  - id: a
+    text: "`base64Encode`"
+    explanation: "Not correct. It encodes a string."
+  - id: b
+    text: "`range`"
+    explanation: "Not correct. It repeats a block."
+  - id: c
+    text: "`scratch`"
+    explanation: "Not correct. It stores values during a render."
+  - id: d
+    text: "`toJSON`"
+    explanation: "Correct. Use it for JSON so quoting is correct."
+  correct_option: d
+  explanation: "Correct. Use it for JSON so quoting is correct."
+- id: ats116-020-m03-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Control whitespace"
+  source_readings:
+  - sections/section-020/module-03/course-01-the-template-language.md
+  prompt: "What does `{{-` do in a template?"
+  options:
+  - id: a
+    text: "It comments the action out."
+    explanation: "Not correct. Comments use a different form."
+  - id: b
+    text: "It reads the secret as KV version 1."
+    explanation: "Not correct. It does not change the read."
+  - id: c
+    text: "It removes the whitespace before the action."
+    explanation: "Correct. `{{-` and `-}}` control white space around an action."
+  - id: d
+    text: "It stops the agent."
+    explanation: "Not correct. It only trims white space."
+  correct_option: c
+  explanation: "Correct. `{{-` and `-}}` control white space around an action."
+- id: ats116-020-m03-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Choose template options"
+  source_readings:
+  - sections/section-020/module-03/course-02-template-options.md
+  prompt: "What does `error_on_missing_key = true` change?"
+  options:
+  - id: a
+    text: "The template fails with an error instead of writing an empty or `<no value>` result."
+    explanation: "Correct. It turns a silent wrong file into a visible failure."
+  - id: b
+    text: "The file is rendered more often."
+    explanation: "Not correct. The schedule is set elsewhere."
+  - id: c
+    text: "The file mode becomes `0600`."
+    explanation: "Not correct. Mode is set with `perms`."
+  - id: d
+    text: "The agent reads from the cache."
+    explanation: "Not correct. It only changes how a missing key is handled."
+  correct_option: a
+  explanation: "Correct. It turns a silent wrong file into a visible failure."
+- id: ats116-020-m03-q07
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Know the render schedule"
+  source_readings:
+  - sections/section-020/module-03/course-03-when-the-agent-renders-again.md
+  prompt: "What is the default value of `static_secret_render_interval` in `template_config`?"
+  options:
+  - id: a
+    text: "One second."
+    explanation: "Not correct. That would flood the server."
+  - id: b
+    text: "Twenty-four hours."
+    explanation: "Not correct. That is far too long as a default."
+  - id: c
+    text: "Never, they render once."
+    explanation: "Not correct. Static secrets are rendered again on this interval."
+  - id: d
+    text: "Five minutes."
+    explanation: "Correct. Static secrets such as KV are read again at this interval."
+  correct_option: d
+  explanation: "Correct. Static secrets such as KV are read again at this interval."
+- id: ats116-020-m03-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Know the render schedule for leased secrets"
+  source_readings:
+  - sections/section-020/module-03/course-03-when-the-agent-renders-again.md
+  prompt: "When does the agent render a template again for a leased secret?"
+  options:
+  - id: a
+    text: "Only when the pod restarts."
+    explanation: "Not correct. The file changes without a restart."
+  - id: b
+    text: "Before the lease runs out."
+    explanation: "Correct. Leased secrets follow the lease. Static secrets follow the interval."
+  - id: c
+    text: "Every second."
+    explanation: "Not correct. That is not how leases work."
+  - id: d
+    text: "Only when the template file changes."
+    explanation: "Not correct. A new lease causes a render."
+  correct_option: b
+  explanation: "Correct. Leased secrets follow the lease. Static secrets follow the interval."
+- id: ats116-020-m03-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Tell the application about a new render"
+  source_readings:
+  - sections/section-020/module-03/course-03-when-the-agent-renders-again.md
+  prompt: "A new KV version reaches the file. What must still happen for the application to use it?"
+  options:
+  - id: a
+    text: "Nothing, the process always reloads files."
+    explanation: "Not correct. Many programs read a file once."
+  - id: b
+    text: "The pod must be deleted."
+    explanation: "Not correct. That is not needed for the file."
+  - id: c
+    text: "The application must notice the change, or the template `command` must tell it."
+    explanation: "Correct. The file changes without a restart, but a running process may keep the old value."
+  - id: d
+    text: "The role must be recreated."
+    explanation: "Not correct. The role is not involved."
+  correct_option: c
+  explanation: "Correct. The file changes without a restart, but a running process may keep the old value."
+- id: ats116-020-m03-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Handle a private key"
+  source_readings:
+  - sections/section-020/module-03/course-04-certificates-and-dynamic-secrets.md
+  prompt: "An agent renders a private key from the PKI engine. How should it be served?"
+  options:
+  - id: a
+    text: "In the same public file as the certificate."
+    explanation: "Not correct. That can expose the key."
+  - id: b
+    text: "In its own file with mode `0600`, and never in a file the web server serves."
+    explanation: "Correct. A private key must have a narrow file mode and must not be reachable over HTTP."
+  - id: c
+    text: "In an annotation of the pod."
+    explanation: "Not correct. Annotations are not secret storage."
+  - id: d
+    text: "In the sink file."
+    explanation: "Not correct. The sink holds the token, not the key."
+  correct_option: b
+  explanation: "Correct. A private key must have a narrow file mode and must not be reachable over HTTP."

@@ -11,6 +11,8 @@ This section runs the agent as a second container in the application's pod, the 
 - The template language: `with secret`, the `.Data.data` fields of a KV version 2 secret, and what happens when a field is missing.
 - When the agent renders again: renewals, the static secret render interval, and how to make a new version show up quickly.
 - Process supervisor mode: secrets as environment variables of a child process that the agent restarts.
+- AppRole roles and secret IDs, wrapped secret IDs, the other auto-auth methods and sink options.
+- The full template language, the template options, the render schedule, and certificates from the PKI engine.
 
 ## The learning path
 
@@ -21,7 +23,24 @@ The module starts at its landing page, which also launches the playground. The p
 1. Auto-Auth And Sinks
 2. Rendering Secrets With Templates, followed by the lab **Render The Inventory Configuration With OpenBao Agent**
 3. Secrets As Environment Variables With Process Supervisor Mode
-4. Summary
+4. Agent Configuration And Troubleshooting
+5. Summary
+
+### 2. Auto-Auth Methods, Secret IDs And Sinks
+
+1. AppRole Roles And Secret IDs
+2. Delivering A Secret ID Wrapped, followed by the lab **Hand An Agent A Wrapped Secret ID**
+3. Other Auto-Auth Methods
+4. Sink Options And Token Sharing
+5. Summary
+
+### 3. Templates In Depth: Language, Options And Schedule
+
+1. The Template Language
+2. Template Options
+3. When The Agent Renders Again, followed by the lab **Render A JSON File With An Agent Template**
+4. Certificates And Dynamic Secrets
+5. Summary
 
 ## Section capstone: Log The Agent In With AppRole And Keep The File Fresh
 

@@ -1,0 +1,236 @@
+# Knowledge check for module module-02 of section 020. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats116-020-m02
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: module-02
+  title: "Auto-Auth Methods, Secret IDs And Sinks"
+placement:
+  position: after
+  reading: sections/section-020/module-02/course-05-summary.md
+questions:
+- id: ats116-020-m02-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Tell the role ID and the secret ID apart"
+  source_readings:
+  - sections/section-020/module-02/course-01-approle-roles-and-secret-ids.md
+  prompt: "Which of the two AppRole values is secret?"
+  options:
+  - id: a
+    text: "The secret ID. The role ID names the role and is not secret."
+    explanation: "Correct. The secret ID works as the password of the login."
+  - id: b
+    text: "The role ID."
+    explanation: "Not correct. It names the role."
+  - id: c
+    text: "Both are secret in the same way."
+    explanation: "Not correct. The role ID alone cannot log in."
+  - id: d
+    text: "Neither, the accessor is the credential."
+    explanation: "Not correct. An accessor only refers to a secret ID."
+  correct_option: a
+  explanation: "Correct. The secret ID works as the password of the login."
+- id: ats116-020-m02-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Limit a secret ID"
+  source_readings:
+  - sections/section-020/module-02/course-01-approle-roles-and-secret-ids.md
+  prompt: "A role has `secret_id_num_uses=1`. What does that do?"
+  options:
+  - id: a
+    text: "The token of the role can be used once."
+    explanation: "Not correct. Token limits are set with the `token_*` settings."
+  - id: b
+    text: "The role can be created once."
+    explanation: "Not correct. It limits secret IDs."
+  - id: c
+    text: "Each secret ID works for one login only."
+    explanation: "Correct. A leaked secret ID becomes a visible failure when someone else has used it first."
+  - id: d
+    text: "The agent can log in once per hour."
+    explanation: "Not correct. It does not set a time limit."
+  correct_option: c
+  explanation: "Correct. A leaked secret ID becomes a visible failure when someone else has used it first."
+- id: ats116-020-m02-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Limit the token of a role"
+  source_readings:
+  - sections/section-020/module-02/course-01-approle-roles-and-secret-ids.md
+  prompt: "Which role setting sets the lifetime of the token an agent receives?"
+  options:
+  - id: a
+    text: "`secret_id_ttl`"
+    explanation: "Not correct. It limits the secret ID."
+  - id: b
+    text: "`token_ttl`"
+    explanation: "Correct. `secret_id_ttl` limits the secret ID. `token_ttl` and `token_max_ttl` limit the token."
+  - id: c
+    text: "`secret_id_bound_cidrs`"
+    explanation: "Not correct. It limits where the secret ID can be used from."
+  - id: d
+    text: "`secret_id_num_uses`"
+    explanation: "Not correct. It limits uses of the secret ID."
+  correct_option: b
+  explanation: "Correct. `secret_id_ttl` limits the secret ID. `token_ttl` and `token_max_ttl` limit the token."
+- id: ats116-020-m02-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Use an accessor"
+  source_readings:
+  - sections/section-020/module-02/course-01-approle-roles-and-secret-ids.md
+  prompt: "What is an accessor of a secret ID used for?"
+  options:
+  - id: a
+    text: "To log in instead of the secret ID."
+    explanation: "Not correct. It cannot log in."
+  - id: b
+    text: "To unwrap a wrapping token."
+    explanation: "Not correct. Unwrapping uses the wrapping token."
+  - id: c
+    text: "To renew the token of the agent."
+    explanation: "Not correct. Renewal uses the token."
+  - id: d
+    text: "To look up or destroy a secret ID without seeing its value."
+    explanation: "Correct. An administrator can manage a secret ID by its accessor."
+  correct_option: d
+  explanation: "Correct. An administrator can manage a secret ID by its accessor."
+- id: ats116-020-m02-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Check a wrapping token"
+  source_readings:
+  - sections/section-020/module-02/course-02-delivering-a-secret-id-wrapped.md
+  prompt: "A receiver wants to check a wrapped secret ID before the agent uses it. What should it call?"
+  options:
+  - id: a
+    text: "`sys/wrapping/unwrap`"
+    explanation: "Not correct. Unwrapping uses the single-use token."
+  - id: b
+    text: "`auth/approle/login`"
+    explanation: "Not correct. That would log in with the wrong value."
+  - id: c
+    text: "`sys/wrapping/lookup` with the wrapping token."
+    explanation: "Correct. The lookup does not use the token up."
+  - id: d
+    text: "`sys/health`"
+    explanation: "Not correct. It says nothing about a wrapping token."
+  correct_option: c
+  explanation: "Correct. The lookup does not use the token up."
+- id: ats116-020-m02-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Configure AppRole with a wrapped secret ID"
+  source_readings:
+  - sections/section-020/module-02/course-02-delivering-a-secret-id-wrapped.md
+  prompt: "Which auto-auth setting makes the agent unwrap the secret ID it reads?"
+  options:
+  - id: a
+    text: "`secret_id_response_wrapping_path`, set to the expected creation path."
+    explanation: "Correct. The agent unwraps the value and checks that it came from that path."
+  - id: b
+    text: "`wrap_ttl`"
+    explanation: "Not correct. It wraps what the agent writes, such as the sink token."
+  - id: c
+    text: "`mount_path`"
+    explanation: "Not correct. It names the auth mount."
+  - id: d
+    text: "`exit_on_err`"
+    explanation: "Not correct. It decides if the agent exits on a login error."
+  correct_option: a
+  explanation: "Correct. The agent unwraps the value and checks that it came from that path."
+- id: ats116-020-m02-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "React to a failed unwrap"
+  source_readings:
+  - sections/section-020/module-02/course-02-delivering-a-secret-id-wrapped.md
+  prompt: "The agent fails to unwrap its secret ID because the token was already used. What is the correct response?"
+  options:
+  - id: a
+    text: "Unwrap the token again."
+    explanation: "Not correct. A wrapping token works once."
+  - id: b
+    text: "Raise `secret_id_ttl`."
+    explanation: "Not correct. The token is spent, not expired."
+  - id: c
+    text: "Ignore it, the agent retries."
+    explanation: "Not correct. The value may be in the wrong hands."
+  - id: d
+    text: "Treat the secret ID as exposed, find out who used it and create a new one."
+    explanation: "Correct. A failed unwrap means someone else used the token first."
+  correct_option: d
+  explanation: "Correct. A failed unwrap means someone else used the token first."
+- id: ats116-020-m02-q08
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Choose an auto-auth method"
+  source_readings:
+  - sections/section-020/module-02/course-03-other-auto-auth-methods.md
+  prompt: "A pod has a Kubernetes service account. Which auto-auth method fits without adding a new secret?"
+  options:
+  - id: a
+    text: "`approle`, because it is the only method that works in a pod."
+    explanation: "Not correct. It needs a delivered secret ID."
+  - id: b
+    text: "`kubernetes`"
+    explanation: "Correct. Choose the method the workload already has a proof of identity for."
+  - id: c
+    text: "`token_file` with the root token."
+    explanation: "Not correct. That puts a powerful token in the pod."
+  - id: d
+    text: "`cert`, because pods have certificates by default."
+    explanation: "Not correct. A pod has a service account token, not a client certificate."
+  correct_option: b
+  explanation: "Correct. Choose the method the workload already has a proof of identity for."
+- id: ats116-020-m02-q09
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Set the options of a sink"
+  source_readings:
+  - sections/section-020/module-02/course-04-sink-options-and-token-sharing.md
+  prompt: "What does the `mode` setting of a file sink control?"
+  options:
+  - id: a
+    text: "How long the token lives."
+    explanation: "Not correct. Lifetime is set by the role."
+  - id: b
+    text: "The auth method that is used."
+    explanation: "Not correct. The method is set in `method`."
+  - id: c
+    text: "The permissions of the file that holds the token."
+    explanation: "Correct. The file is a bearer credential, so its permissions matter."
+  - id: d
+    text: "Whether the token is wrapped."
+    explanation: "Not correct. Wrapping is set with `wrap_ttl`."
+  correct_option: c
+  explanation: "Correct. The file is a bearer credential, so its permissions matter."
+- id: ats116-020-m02-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Limit who can read the token"
+  source_readings:
+  - sections/section-020/module-02/course-04-sink-options-and-token-sharing.md
+  prompt: "No other process in the pod needs the agent's token. What is the safest sink setting?"
+  options:
+  - id: a
+    text: "Keep the sink and set mode `0777`."
+    explanation: "Not correct. That lets anyone read the token."
+  - id: b
+    text: "Remove the sink, so the token is never written to a file."
+    explanation: "Correct. A token on disk can be read by every container that mounts it."
+  - id: c
+    text: "Keep the sink and share the volume with all containers."
+    explanation: "Not correct. That widens the exposure."
+  - id: d
+    text: "Add a second sink with the same token."
+    explanation: "Not correct. That adds another copy."
+  correct_option: b
+  explanation: "Correct. A token on disk can be read by every container that mounts it."

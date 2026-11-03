@@ -1,0 +1,236 @@
+# Knowledge check for module module-02 of section 040. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats116-040-m02
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: module-02
+  title: "Annotations In Depth"
+placement:
+  position: after
+  reading: sections/section-040/module-02/course-05-summary.md
+questions:
+- id: ats116-040-m02-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Name a secret with an annotation"
+  source_readings:
+  - sections/section-040/module-02/course-01-several-secrets-several-files.md
+  prompt: "In `vault.hashicorp.com/agent-inject-secret-api`, what is `api`?"
+  options:
+  - id: a
+    text: "The unique name of one secret. Every annotation with that name shapes that secret."
+    explanation: "Correct. The same name must be used in all the annotations of that secret."
+  - id: b
+    text: "The name of the pod."
+    explanation: "Not correct. The pod name is not part of the annotation."
+  - id: c
+    text: "The OpenBao mount."
+    explanation: "Not correct. The mount is in the path value."
+  - id: d
+    text: "The name of the role."
+    explanation: "Not correct. The role has its own annotation."
+  correct_option: a
+  explanation: "Correct. The same name must be used in all the annotations of that secret."
+- id: ats116-040-m02-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Set the secret path"
+  source_readings:
+  - sections/section-040/module-02/course-01-several-secrets-several-files.md
+  prompt: "What is the value of `agent-inject-secret-<name>`?"
+  options:
+  - id: a
+    text: "The file name."
+    explanation: "Not correct. That is `agent-inject-file-<name>`."
+  - id: b
+    text: "The template."
+    explanation: "Not correct. That is `agent-inject-template-<name>`."
+  - id: c
+    text: "The path of the secret. For KV version 2 it includes `data/`."
+    explanation: "Correct. For example `secret/data/inventory/api`."
+  - id: d
+    text: "The role name."
+    explanation: "Not correct. That is `role`."
+  correct_option: c
+  explanation: "Correct. For example `secret/data/inventory/api`."
+- id: ats116-040-m02-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Name the file"
+  source_readings:
+  - sections/section-040/module-02/course-02-shaping-the-files.md
+  prompt: "Which annotation sets the file name of a secret?"
+  options:
+  - id: a
+    text: "`agent-inject-perms-<name>`"
+    explanation: "Not correct. It sets the mode."
+  - id: b
+    text: "`agent-inject-file-<name>`"
+    explanation: "Correct. Without it the file is named after the unique name."
+  - id: c
+    text: "`agent-inject-command-<name>`"
+    explanation: "Not correct. It runs a command."
+  - id: d
+    text: "`agent-inject-containers`"
+    explanation: "Not correct. It limits containers."
+  correct_option: b
+  explanation: "Correct. Without it the file is named after the unique name."
+- id: ats116-040-m02-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Know the default output"
+  source_readings:
+  - sections/section-040/module-02/course-02-shaping-the-files.md
+  prompt: "A secret is injected without a template. What does the file contain?"
+  options:
+  - id: a
+    text: "Only the values, one per line."
+    explanation: "Not correct. Keys and metadata are included."
+  - id: b
+    text: "A JSON document of the data."
+    explanation: "Not correct. JSON needs a template."
+  - id: c
+    text: "Nothing."
+    explanation: "Not correct. The file is written."
+  - id: d
+    text: "The whole response in Go's map notation."
+    explanation: "Correct. This is why a template is needed for a useful file."
+  correct_option: d
+  explanation: "Correct. This is why a template is needed for a useful file."
+- id: ats116-040-m02-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Write a template annotation"
+  source_readings:
+  - sections/section-040/module-02/course-02-shaping-the-files.md
+  prompt: "Which annotation writes a template for one secret?"
+  options:
+  - id: a
+    text: "`agent-inject-secret-<name>`"
+    explanation: "Not correct. It sets the path."
+  - id: b
+    text: "`agent-inject-token`"
+    explanation: "Not correct. It writes the token to a file."
+  - id: c
+    text: "`agent-inject-template-<name>`"
+    explanation: "Correct. The value is the template text."
+  - id: d
+    text: "`agent-limits-cpu`"
+    explanation: "Not correct. It limits CPU."
+  correct_option: c
+  explanation: "Correct. The value is the template text."
+- id: ats116-040-m02-q06
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Set file permissions"
+  source_readings:
+  - sections/section-040/module-02/course-02-shaping-the-files.md
+  prompt: "Which annotation sets the file mode of an injected secret?"
+  options:
+  - id: a
+    text: "`agent-inject-perms-<name>`"
+    explanation: "Correct. It controls who can read the file."
+  - id: b
+    text: "`agent-inject-file-<name>`"
+    explanation: "Not correct. It sets the name."
+  - id: c
+    text: "`agent-pre-populate-only`"
+    explanation: "Not correct. It removes the sidecar."
+  - id: d
+    text: "`role`"
+    explanation: "Not correct. It names the login role."
+  correct_option: a
+  explanation: "Correct. It controls who can read the file."
+- id: ats116-040-m02-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Tune the render interval"
+  source_readings:
+  - sections/section-040/module-02/course-03-tuning-the-agent-containers.md
+  prompt: "Which annotation decides how soon a changed KV version 2 secret reaches the file?"
+  options:
+  - id: a
+    text: "`agent-inject-perms-<name>`"
+    explanation: "Not correct. It sets the mode."
+  - id: b
+    text: "`agent-init-first`"
+    explanation: "Not correct. It orders init containers."
+  - id: c
+    text: "`agent-inject-containers`"
+    explanation: "Not correct. It limits which containers see the volume."
+  - id: d
+    text: "`template-static-secret-render-interval`"
+    explanation: "Correct. It sets the render interval for static secrets."
+  correct_option: d
+  explanation: "Correct. It sets the render interval for static secrets."
+- id: ats116-040-m02-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Apply an annotation change"
+  source_readings:
+  - sections/section-040/module-02/course-03-tuning-the-agent-containers.md
+  prompt: "An annotation is changed on a running Deployment's pod. When does the pod see the change?"
+  options:
+  - id: a
+    text: "At once, the sidecar reloads."
+    explanation: "Not correct. The injector does not touch running pods."
+  - id: b
+    text: "Only when the pod is replaced, because annotations reach new pods."
+    explanation: "Correct. The injector acts when a pod is created."
+  - id: c
+    text: "After the next render interval."
+    explanation: "Not correct. The render interval does not read annotations."
+  - id: d
+    text: "Never, annotations are ignored."
+    explanation: "Not correct. New pods use them."
+  correct_option: b
+  explanation: "Correct. The injector acts when a pod is created."
+- id: ats116-040-m02-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Run the agent only at start"
+  source_readings:
+  - sections/section-040/module-02/course-03-tuning-the-agent-containers.md
+  prompt: "What does `agent-pre-populate-only` do?"
+  options:
+  - id: a
+    text: "It keeps the sidecar and updates more often."
+    explanation: "Not correct. It removes the sidecar."
+  - id: b
+    text: "It limits files to read-only."
+    explanation: "Not correct. It does not set modes."
+  - id: c
+    text: "It removes the sidecar, so the files are written once by the init container."
+    explanation: "Correct. Secrets do not update afterwards."
+  - id: d
+    text: "It logs the agent in with AppRole."
+    explanation: "Not correct. It does not change the auth method."
+  correct_option: c
+  explanation: "Correct. Secrets do not update afterwards."
+- id: ats116-040-m02-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Keep the role narrow"
+  source_readings:
+  - sections/section-040/module-02/course-04-roles-auth-paths-and-connections.md
+  prompt: "Why should the `role` annotation name a narrow role?"
+  options:
+  - id: a
+    text: "Roles are billed per use."
+    explanation: "Not correct. They are not billed."
+  - id: b
+    text: "The annotation is the only thing between a pod and the policies of that role."
+    explanation: "Correct. Anyone who can create a pod can name a role."
+  - id: c
+    text: "A wide role slows the injector."
+    explanation: "Not correct. Width has no effect on speed."
+  - id: d
+    text: "The injector ignores wide roles."
+    explanation: "Not correct. It does not check width."
+  correct_option: b
+  explanation: "Correct. Anyone who can create a pod can name a role."

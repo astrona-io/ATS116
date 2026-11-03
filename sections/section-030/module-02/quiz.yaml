@@ -1,0 +1,236 @@
+# Knowledge check for module module-02 of section 030. Listed in astrona.yaml as a `type: quiz` entry after the module summary.
+schema_version: 1
+kind: question_bank
+id: ats116-030-m02
+course_id: ATS116
+exam_code: OPENBAO
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: module
+  id: module-02
+  title: "Listeners, TLS And Token Control In OpenBao Proxy"
+placement:
+  position: after
+  reading: sections/section-030/module-02/course-05-summary.md
+questions:
+- id: ats116-030-m02-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Choose a listener address"
+  source_readings:
+  - sections/section-030/module-02/course-01-listeners-and-who-can-reach-the-proxy.md
+  prompt: "A proxy `tcp` listener is on `127.0.0.1:8100` in a sidecar. Who can reach it?"
+  options:
+  - id: a
+    text: "Only containers in the same pod."
+    explanation: "Correct. Loopback is shared by the containers of one pod and nobody else."
+  - id: b
+    text: "Every pod in the cluster."
+    explanation: "Not correct. That needs a listener on `0.0.0.0` and a Service."
+  - id: c
+    text: "Only the node."
+    explanation: "Not correct. The node does not share the pod's loopback."
+  - id: d
+    text: "Nobody, loopback is closed."
+    explanation: "Not correct. The application in the pod can use it."
+  correct_option: a
+  explanation: "Correct. Loopback is shared by the containers of one pod and nobody else."
+- id: ats116-030-m02-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Judge the exposure of a listener"
+  source_readings:
+  - sections/section-030/module-02/course-01-listeners-and-who-can-reach-the-proxy.md
+  prompt: "What does a listener on `0.0.0.0` change?"
+  options:
+  - id: a
+    text: "Nothing, it is the same as loopback."
+    explanation: "Not correct. It listens on every interface."
+  - id: b
+    text: "It makes the proxy log in again."
+    explanation: "Not correct. Login is not affected."
+  - id: c
+    text: "It is reachable from the cluster, so any pod that can route to it gets the proxy's identity."
+    explanation: "Correct. The proxy lends its token to every request it accepts."
+  - id: d
+    text: "It turns on TLS."
+    explanation: "Not correct. TLS must be configured separately."
+  correct_option: c
+  explanation: "Correct. The proxy lends its token to every request it accepts."
+- id: ats116-030-m02-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Use a unix listener"
+  source_readings:
+  - sections/section-030/module-02/course-01-listeners-and-who-can-reach-the-proxy.md
+  prompt: "How is a `unix` listener protected?"
+  options:
+  - id: a
+    text: "By the `X-Vault-Request` header."
+    explanation: "Not correct. That header is not an access control."
+  - id: b
+    text: "By the permissions of the socket file."
+    explanation: "Correct. Only users and containers that can open the file can connect."
+  - id: c
+    text: "By TLS only."
+    explanation: "Not correct. TLS is not used for a socket file."
+  - id: d
+    text: "It is not protected."
+    explanation: "Not correct. File permissions decide who can connect."
+  correct_option: b
+  explanation: "Correct. Only users and containers that can open the file can connect."
+- id: ats116-030-m02-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Know what the request header guards"
+  source_readings:
+  - sections/section-030/module-02/course-01-listeners-and-who-can-reach-the-proxy.md
+  prompt: "What does `require_request_header` do?"
+  options:
+  - id: a
+    text: "It requires a token on every request."
+    explanation: "Not correct. It checks one header."
+  - id: b
+    text: "It encrypts requests."
+    explanation: "Not correct. Encryption needs TLS."
+  - id: c
+    text: "It limits the rate of requests."
+    explanation: "Not correct. It does not count requests."
+  - id: d
+    text: "It refuses requests that lack `X-Vault-Request: true`."
+    explanation: "Correct. It stops accidental requests, such as a browser, but not a caller who adds the header."
+  correct_option: d
+  explanation: "Correct. It stops accidental requests, such as a browser, but not a caller who adds the header."
+- id: ats116-030-m02-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Trust OpenBao with a CA"
+  source_readings:
+  - sections/section-030/module-02/course-02-the-vault-stanza-and-tls-to-openbao.md
+  prompt: "How should the proxy trust the OpenBao server certificate?"
+  options:
+  - id: a
+    text: "With `tls_skip_verify = true`."
+    explanation: "Not correct. That trusts any server."
+  - id: b
+    text: "By turning off the listener."
+    explanation: "Not correct. The listener is a different setting."
+  - id: c
+    text: "With `ca_cert` or `ca_path` in the `vault` stanza."
+    explanation: "Correct. This keeps verification on. `tls_skip_verify` should not leave a test."
+  - id: d
+    text: "By using plain HTTP."
+    explanation: "Not correct. That sends tokens unencrypted."
+  correct_option: c
+  explanation: "Correct. This keeps verification on. `tls_skip_verify` should not leave a test."
+- id: ats116-030-m02-q06
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Set use_auto_auth_token"
+  source_readings:
+  - sections/section-030/module-02/course-03-whose-token-the-proxy-sends.md
+  prompt: "What does `use_auto_auth_token = false` do?"
+  options:
+  - id: a
+    text: "The proxy never adds its own token to a request."
+    explanation: "Correct. The caller must send its own token."
+  - id: b
+    text: "The proxy adds its token to every request."
+    explanation: "Not correct. That is `\"force\"`."
+  - id: c
+    text: "The proxy adds its token only if the request has none."
+    explanation: "Not correct. That is `true`."
+  - id: d
+    text: "The proxy stops logging in."
+    explanation: "Not correct. Login still happens when auto-auth is configured."
+  correct_option: a
+  explanation: "Correct. The caller must send its own token."
+- id: ats116-030-m02-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Predict the result of a stale token"
+  source_readings:
+  - sections/section-030/module-02/course-03-whose-token-the-proxy-sends.md
+  prompt: "With `use_auto_auth_token = true`, a request arrives with a stale token. What happens?"
+  options:
+  - id: a
+    text: "The proxy replaces the token."
+    explanation: "Not correct. That needs `\"force\"`."
+  - id: b
+    text: "The proxy drops the request."
+    explanation: "Not correct. It forwards the request."
+  - id: c
+    text: "The proxy renews the stale token."
+    explanation: "Not correct. It cannot renew a token it does not own."
+  - id: d
+    text: "The proxy forwards the stale token and OpenBao refuses it."
+    explanation: "Correct. Only requests with no token get the proxy's token."
+  correct_option: d
+  explanation: "Correct. Only requests with no token get the proxy's token."
+- id: ats116-030-m02-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Make the proxy replace tokens"
+  source_readings:
+  - sections/section-030/module-02/course-03-whose-token-the-proxy-sends.md
+  prompt: "Which setting makes the proxy's identity the only one OpenBao sees?"
+  options:
+  - id: a
+    text: "`use_auto_auth_token = true`"
+    explanation: "Not correct. It keeps a token the request already has."
+  - id: b
+    text: "`use_auto_auth_token = \"force\"`, a string."
+    explanation: "Correct. The proxy replaces any token on the request."
+  - id: c
+    text: "`use_auto_auth_token = false`"
+    explanation: "Not correct. It never adds the proxy's token."
+  - id: d
+    text: "`require_request_header = true`"
+    explanation: "Not correct. It checks a header only."
+  correct_option: b
+  explanation: "Correct. The proxy replaces any token on the request."
+- id: ats116-030-m02-q09
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Configure the vault stanza"
+  source_readings:
+  - sections/section-030/module-02/course-02-the-vault-stanza-and-tls-to-openbao.md
+  prompt: "Which `vault` stanza setting names the OpenBao server?"
+  options:
+  - id: a
+    text: "`mount_path`"
+    explanation: "Not correct. It names an auth mount."
+  - id: b
+    text: "`namespace`"
+    explanation: "Not correct. It names a namespace."
+  - id: c
+    text: "`address`"
+    explanation: "Correct. It holds the URL of the OpenBao server."
+  - id: d
+    text: "`listener`"
+    explanation: "Not correct. That is a block outside the stanza."
+  correct_option: c
+  explanation: "Correct. It holds the URL of the OpenBao server."
+- id: ats116-030-m02-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Troubleshoot a refused request"
+  source_readings:
+  - sections/section-030/module-02/course-04-logs-and-troubleshooting.md
+  prompt: "The application gets `403` through the proxy. What is the first step?"
+  options:
+  - id: a
+    text: "Disable TLS."
+    explanation: "Not correct. That changes security and not the cause."
+  - id: b
+    text: "Read the application's answer, then call the proxy from inside the pod and read the proxy's log."
+    explanation: "Correct. Work from the application inward, one setting at a time."
+  - id: c
+    text: "Open the listener on `0.0.0.0`."
+    explanation: "Not correct. That widens access and fixes nothing."
+  - id: d
+    text: "Delete the role."
+    explanation: "Not correct. That breaks the login."
+  correct_option: b
+  explanation: "Correct. Work from the application inward, one setting at a time."
