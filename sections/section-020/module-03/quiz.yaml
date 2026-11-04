@@ -4,7 +4,7 @@ kind: question_bank
 id: ats116-020-m03
 course_id: ATS116
 exam_code: OPENBAO
-status: draft
+status: alpha
 provenance: Original practice material written for this course; not official exam questions.
 scope:
   type: module

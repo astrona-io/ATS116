@@ -13,7 +13,7 @@
 training:
   id: ATS116
   title: "OpenBao: Agent, Proxy & Application Integration"
-  maturity: draft
+  maturity: alpha
   description: >
     Training material covering the OpenBao Agent, Proxy & Application
     Integration domain of the OpenBao training path: the HTTP API with
