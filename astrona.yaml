@@ -417,7 +417,7 @@ modules:
         estimated_duration: 30m
         topic: proxy
         task_kind: troubleshooting
-        tags: [bao-proxy, use_auto_auth_token, listener, token-control, policy]
+        tags: [bao-proxy, use-auto-auth-token, listener, token-control, policy]
         learning_goals:
           - Find why a request that carries an invalid token is refused although the proxy has a valid one
           - Set use_auto_auth_token so the proxy always replaces the token on the request
