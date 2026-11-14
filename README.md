@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://astrona.io/courses/openbao">
+    <img src="https://astrona.io/courses/openbao/domains/ATS116.svg" alt="ATS116: OpenBao Agent, Proxy & Application Integration, part of the OpenBao course on Astrona" width="100%">
+  </a>
+</p>
+
 # ATS116 — OpenBao Agent, Proxy & Application Integration
 
 Course material for the **OpenBao Agent, Proxy & Application Integration**
